@@ -5,7 +5,11 @@ import android.arch.lifecycle.MutableLiveData;
 
 import java.util.List;
 
+import es.eylen.popularmovies.BuildConfig;
 import es.eylen.popularmovies.service.model.Movie;
+import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -22,9 +26,27 @@ public class MovieRepository {
 
     private MovieRepository(){
         //TODO inject the service
+        //NOTE: Interceptor for adding API key to all requests: https://futurestud.io/tutorials/retrofit-2-how-to-add-query-parameters-to-every-request
+        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+        httpClient.addInterceptor(chain -> {
+            Request original = chain.request();
+            HttpUrl originalHttpUrl = original.url();
+
+            HttpUrl url = originalHttpUrl.newBuilder()
+                    .addQueryParameter("api_key", BuildConfig.MOVIE_DB_API_KEY)
+                    .build();
+
+            // Request customization: add request headers
+            Request.Builder requestBuilder = original.newBuilder()
+                    .url(url);
+
+            Request request = requestBuilder.build();
+            return chain.proceed(request);
+        });
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(TheMovieDbClient.API_URL)
                 .addConverterFactory(GsonConverterFactory.create())
+                .client(httpClient.build())
                 .build();
         movieDbService = retrofit.create(TheMovieDbClient.class);
     }

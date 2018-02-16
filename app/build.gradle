@@ -1,5 +1,7 @@
 apply plugin: 'com.android.application'
 
+def THE_MOVIE_DB_API_KEY = '"' + TheMovieDBApiKey + '"' ?: "Define TheMovieDBApiKey API Key in gradle.properties"
+
 android {
     compileSdkVersion 27
     defaultConfig {
@@ -9,6 +11,8 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        buildConfigField "String", "MOVIE_DB_API_KEY", THE_MOVIE_DB_API_KEY
     }
     buildTypes {
         release {
