@@ -1,0 +1,64 @@
+package es.eylen.popularmovies.service.repository;
+
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
+
+import java.util.List;
+
+import es.eylen.popularmovies.service.model.Movie;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
+/**
+ * Created by eylen on 16/02/2018.
+ */
+
+public class MovieRepository {
+    private TheMovieDbClient movieDbService;
+    private static MovieRepository movieRepository;
+
+    private MovieRepository(){
+        //TODO inject the service
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(TheMovieDbClient.API_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        movieDbService = retrofit.create(TheMovieDbClient.class);
+    }
+
+    public synchronized static MovieRepository getInstance(){
+        if (movieRepository == null){
+            movieRepository = new MovieRepository();
+        }
+        return movieRepository;
+    }
+
+    public LiveData<List<Movie>> getMovieList(boolean sortByPopular){
+        final MutableLiveData<List<Movie>> data = new MutableLiveData<>();
+
+        Call<List<Movie>> call;
+        if (sortByPopular) {
+            call = movieDbService.getPopularMovies();
+        } else {
+            call = movieDbService.getTopRatedMovies();
+        }
+
+        call.enqueue(new Callback<List<Movie>>() {
+            @Override
+            public void onResponse(Call<List<Movie>> call, Response<List<Movie>> response) {
+                data.setValue(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<List<Movie>> call, Throwable t) {
+                //TODO implement failure handling
+                data.setValue(null);
+            }
+        });
+
+        return data;
+    }
+}
