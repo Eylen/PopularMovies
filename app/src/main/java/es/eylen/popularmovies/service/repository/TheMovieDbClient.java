@@ -1,8 +1,6 @@
 package es.eylen.popularmovies.service.repository;
 
-import java.util.List;
-
-import es.eylen.popularmovies.service.model.Movie;
+import es.eylen.popularmovies.service.model.TheMovieDBResponse;
 import retrofit2.Call;
 import retrofit2.http.GET;
 
@@ -15,8 +13,8 @@ public interface TheMovieDbClient {
 
 
     @GET("movie/popular")
-    Call<List<Movie>> getPopularMovies();
+    Call<TheMovieDBResponse> getPopularMovies();
 
     @GET("movie/top_rated")
-    Call<List<Movie>> getTopRatedMovies();
+    Call<TheMovieDBResponse> getTopRatedMovies();
 }

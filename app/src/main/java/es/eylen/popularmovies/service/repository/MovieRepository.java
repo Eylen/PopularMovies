@@ -7,6 +7,7 @@ import java.util.List;
 
 import es.eylen.popularmovies.BuildConfig;
 import es.eylen.popularmovies.service.model.Movie;
+import es.eylen.popularmovies.service.model.TheMovieDBResponse;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -61,21 +62,26 @@ public class MovieRepository {
     public LiveData<List<Movie>> getMovieList(boolean sortByPopular){
         final MutableLiveData<List<Movie>> data = new MutableLiveData<>();
 
-        Call<List<Movie>> call;
+        Call<TheMovieDBResponse> call;
         if (sortByPopular) {
             call = movieDbService.getPopularMovies();
         } else {
             call = movieDbService.getTopRatedMovies();
         }
 
-        call.enqueue(new Callback<List<Movie>>() {
+        call.enqueue(new Callback<TheMovieDBResponse>() {
             @Override
-            public void onResponse(Call<List<Movie>> call, Response<List<Movie>> response) {
-                data.setValue(response.body());
+            public void onResponse(Call<TheMovieDBResponse> call, Response<TheMovieDBResponse> response) {
+                if (response.isSuccessful()) {
+                    data.setValue(response.body().getResults());
+                } else {
+                    //TODO implement failure handling
+                    data.setValue(null);
+                }
             }
 
             @Override
-            public void onFailure(Call<List<Movie>> call, Throwable t) {
+            public void onFailure(Call<TheMovieDBResponse> call, Throwable t) {
                 //TODO implement failure handling
                 data.setValue(null);
             }
