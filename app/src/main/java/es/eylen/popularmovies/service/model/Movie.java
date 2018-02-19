@@ -1,5 +1,7 @@
 package es.eylen.popularmovies.service.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.Date;
 
 /**
@@ -8,15 +10,21 @@ import java.util.Date;
 
 public class Movie {
     private int id;
+    @SerializedName(value = "vote_count")
     private int voteCount;
+    @SerializedName(value = "vote_average")
     private float voteAverage;
     private float popularity;
 
     private String title;
+    @SerializedName(value = "original_title")
     private String originalTitle;
+    @SerializedName(value = "poster_path")
     private String poster;
 
+    @SerializedName(value = "overview")
     private String synopsis;
+    @SerializedName(value = "release_date")
     private Date releaseDate;
 
     public Movie() {

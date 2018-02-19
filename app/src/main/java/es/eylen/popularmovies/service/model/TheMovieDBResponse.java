@@ -1,5 +1,7 @@
 package es.eylen.popularmovies.service.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.List;
 
 /**
@@ -8,9 +10,12 @@ import java.util.List;
 
 public class TheMovieDBResponse {
     private int page;
+    @SerializedName(value = "total_results")
     private int totalResults;
+    @SerializedName(value = "total_pages")
     private int totalPages;
-    private List<Movie> results;
+    @SerializedName(value = "results")
+    private List<Movie> movies;
 
     public TheMovieDBResponse() {
     }
@@ -39,11 +44,11 @@ public class TheMovieDBResponse {
         this.totalPages = totalPages;
     }
 
-    public List<Movie> getResults() {
-        return results;
+    public List<Movie> getMovies() {
+        return movies;
     }
 
-    public void setResults(List<Movie> results) {
-        this.results = results;
+    public void setMovies(List<Movie> movies) {
+        this.movies = movies;
     }
 }

@@ -73,7 +73,7 @@ public class MovieRepository {
             @Override
             public void onResponse(Call<TheMovieDBResponse> call, Response<TheMovieDBResponse> response) {
                 if (response.isSuccessful()) {
-                    data.setValue(response.body().getResults());
+                    data.setValue(response.body().getMovies());
                 } else {
                     //TODO implement failure handling
                     data.setValue(null);
