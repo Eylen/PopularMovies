@@ -15,7 +15,7 @@ import es.eylen.popularmovies.R;
 import es.eylen.popularmovies.service.model.Movie;
 
 /**
- * Created by spicado on 16/02/2018.
+ * Created by eylen on 16/02/2018.
  */
 
 public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.MovieViewHolder> {
@@ -73,16 +73,14 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
 
     class MovieViewHolder extends RecyclerView.ViewHolder{
         private ImageView mPoster;
-        private View mView;
 
         MovieViewHolder(View itemView) {
             super(itemView);
-            this.mView = itemView;
             mPoster = itemView.findViewById(R.id.movie_item_poster);
         }
 
         void setPoster(String posterUrl){
-            Picasso.with(mView.getContext()).load("http://image.tmdb.org/t/p/w185/" + posterUrl).into(mPoster);
+            Picasso.with(mPoster.getContext()).load("http://image.tmdb.org/t/p/w185/" + posterUrl).into(mPoster);
         }
     }
 }
