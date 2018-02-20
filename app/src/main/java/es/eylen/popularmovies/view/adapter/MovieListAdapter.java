@@ -57,16 +57,20 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
 
                 @Override
                 public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
-                    return MovieListAdapter.this.movieList.get(oldItemPosition).getId() == movieList.get(newItemPosition).getId();
+                    final Movie oldMovie = MovieListAdapter.this.movieList.get(oldItemPosition);
+                    final Movie newMovie = movieList.get(newItemPosition);
+                    return oldMovie.getId() == newMovie.getId();
                 }
 
                 @Override
                 public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
-                    //TODO compare contents
-                    return false;
+                    final Movie oldMovie = MovieListAdapter.this.movieList.get(oldItemPosition);
+                    final Movie newMovie = movieList.get(newItemPosition);
+                    return oldMovie.getId() == newMovie.getId();
                 }
             });
-            this.movieList = movieList;
+            this.movieList.clear();
+            this.movieList.addAll(movieList);
             result.dispatchUpdatesTo(this);
         }
     }

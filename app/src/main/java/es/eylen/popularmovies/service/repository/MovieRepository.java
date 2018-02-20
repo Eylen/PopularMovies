@@ -1,6 +1,5 @@
 package es.eylen.popularmovies.service.repository;
 
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 
 import java.util.List;
@@ -59,11 +58,9 @@ public class MovieRepository {
         return movieRepository;
     }
 
-    public LiveData<List<Movie>> getMovieList(boolean sortByPopular){
-        final MutableLiveData<List<Movie>> data = new MutableLiveData<>();
-
+    public void loadMovieList(MutableLiveData<List<Movie>> movieList, boolean sortByPopularity){
         Call<TheMovieDBResponse> call;
-        if (sortByPopular) {
+        if (sortByPopularity) {
             call = movieDbService.getPopularMovies();
         } else {
             call = movieDbService.getTopRatedMovies();
@@ -73,20 +70,18 @@ public class MovieRepository {
             @Override
             public void onResponse(Call<TheMovieDBResponse> call, Response<TheMovieDBResponse> response) {
                 if (response.isSuccessful()) {
-                    data.setValue(response.body().getMovies());
+                    movieList.postValue(response.body().getMovies());
                 } else {
                     //TODO implement failure handling
-                    data.setValue(null);
+                    movieList.postValue(null);
                 }
             }
 
             @Override
             public void onFailure(Call<TheMovieDBResponse> call, Throwable t) {
                 //TODO implement failure handling
-                data.setValue(null);
+                movieList.postValue(null);
             }
         });
-
-        return data;
     }
 }
