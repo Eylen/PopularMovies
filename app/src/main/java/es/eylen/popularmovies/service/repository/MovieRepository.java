@@ -1,5 +1,6 @@
 package es.eylen.popularmovies.service.repository;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 
 import java.util.List;
@@ -58,7 +59,8 @@ public class MovieRepository {
         return movieRepository;
     }
 
-    public void loadMovieList(MutableLiveData<List<Movie>> movieList, boolean sortByPopularity){
+    public LiveData<List<Movie>> loadMovieList(boolean sortByPopularity){
+        MutableLiveData<List<Movie>> movieList = new MutableLiveData<>();
         Call<TheMovieDBResponse> call;
         if (sortByPopularity) {
             call = movieDbService.getPopularMovies();
@@ -83,5 +85,6 @@ public class MovieRepository {
                 movieList.postValue(null);
             }
         });
+        return movieList;
     }
 }

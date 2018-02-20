@@ -23,8 +23,6 @@ public class MoviesActivity extends AppCompatActivity implements MovieListAdapte
 
     private MovieListViewModel mMovieListViewModel;
 
-    private static final int NUM_COLS = 2;
-    private boolean sortByPopularity = true;
     //TODO add loading indicator
 
     @Override
@@ -61,20 +59,7 @@ public class MoviesActivity extends AppCompatActivity implements MovieListAdapte
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.sort_by_popularity:
-                if (!sortByPopularity){
-                    sortByPopularity = true;
-                    mMovieListViewModel.getMovies(sortByPopularity);
-                }
-                break;
-            case R.id.sort_by_top_rated:
-                if (sortByPopularity){
-                    sortByPopularity = false;
-                    mMovieListViewModel.getMovies(sortByPopularity);
-                }
-                break;
-        }
+        mMovieListViewModel.setSortByPopularity(item.getItemId() == R.id.sort_by_popularity);
         return super.onOptionsItemSelected(item);
     }
 
