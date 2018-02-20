@@ -1,5 +1,8 @@
 package es.eylen.popularmovies.service.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Date;
@@ -8,7 +11,7 @@ import java.util.Date;
  * Created by eylen on 16/02/2018.
  */
 
-public class Movie {
+public class Movie implements Parcelable{
     private int id;
     @SerializedName(value = "vote_count")
     private int voteCount;
@@ -100,5 +103,63 @@ public class Movie {
 
     public void setReleaseDate(Date releaseDate) {
         this.releaseDate = releaseDate;
+    }
+
+
+    @Override
+    public String toString() {
+        return "Movie{" +
+                "id=" + id +
+                ", voteCount=" + voteCount +
+                ", voteAverage=" + voteAverage +
+                ", popularity=" + popularity +
+                ", title='" + title + '\'' +
+                ", originalTitle='" + originalTitle + '\'' +
+                ", poster='" + poster + '\'' +
+                ", synopsis='" + synopsis + '\'' +
+                ", releaseDate=" + releaseDate +
+                '}';
+    }
+
+    public static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>(){
+        @Override
+        public Movie createFromParcel(Parcel parcel) {
+            return new Movie(parcel);
+        }
+
+        @Override
+        public Movie[] newArray(int size) {
+            return new Movie[size];
+        }
+    };
+
+    private Movie(Parcel parcel){
+        this.id = parcel.readInt();
+        this.voteCount = parcel.readInt();
+        this.voteAverage = parcel.readFloat();
+        this.popularity = parcel.readFloat();
+        this.title = parcel.readString();
+        this.originalTitle = parcel.readString();
+        this.poster = parcel.readString();
+        this.synopsis = parcel.readString();
+        this.releaseDate = new Date(parcel.readLong());
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(id);
+        parcel.writeInt(voteCount);
+        parcel.writeFloat(voteAverage);
+        parcel.writeFloat(popularity);
+        parcel.writeString(title);
+        parcel.writeString(originalTitle);
+        parcel.writeString(poster);
+        parcel.writeString(synopsis);
+        parcel.writeLong(releaseDate.getTime());
     }
 }

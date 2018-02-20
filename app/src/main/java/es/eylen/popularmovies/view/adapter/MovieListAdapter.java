@@ -20,6 +20,11 @@ import es.eylen.popularmovies.service.model.Movie;
 
 public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.MovieViewHolder> {
     private List<Movie> movieList;
+    private MovieClickListener mClickListener;
+
+    public MovieListAdapter(MovieClickListener movieClickListener) {
+        this.mClickListener = movieClickListener;
+    }
 
     @Override
     public MovieViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -32,6 +37,9 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
     public void onBindViewHolder(MovieViewHolder holder, int position) {
         Movie movie = movieList.get(position);
         holder.setPoster(movie.getPoster());
+        if (mClickListener != null) {
+            holder.mPoster.setOnClickListener(view -> mClickListener.onClick(movie));
+        }
     }
 
     @Override
@@ -86,5 +94,9 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
         void setPoster(String posterUrl){
             Picasso.with(mPoster.getContext()).load("http://image.tmdb.org/t/p/w185/" + posterUrl).into(mPoster);
         }
+    }
+
+    public interface MovieClickListener {
+        void onClick(Movie movie);
     }
 }

@@ -1,6 +1,7 @@
 package es.eylen.popularmovies.view.ui;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -10,10 +11,11 @@ import android.view.MenuItem;
 import android.view.View;
 
 import es.eylen.popularmovies.R;
+import es.eylen.popularmovies.service.model.Movie;
 import es.eylen.popularmovies.view.adapter.MovieListAdapter;
 import es.eylen.popularmovies.viewmodel.MovieListViewModel;
 
-public class MoviesActivity extends AppCompatActivity {
+public class MoviesActivity extends AppCompatActivity implements MovieListAdapter.MovieClickListener{
     private static final String TAG = "MoviesActivity";
 
     private RecyclerView mRecyclerView;
@@ -30,15 +32,8 @@ public class MoviesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movies);
 
-        mMovieListAdapter = new MovieListAdapter();
+        mMovieListAdapter = new MovieListAdapter(this);
         mRecyclerView = findViewById(R.id.movie_list);
-
-//        FlexboxLayoutManager layoutManager = new FlexboxLayoutManager(this);
-//        layoutManager.setFlexDirection(FlexDirection.ROW);
-//        layoutManager.setJustifyContent(JustifyContent.SPACE_AROUND);
-//        layoutManager.setAlignItems(AlignItems.STRETCH);
-//        mRecyclerView.setLayoutManager(layoutManager);
-//        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
         mRecyclerView.setAdapter(mMovieListAdapter);
         mRecyclerView.setHasFixedSize(true);
@@ -81,5 +76,12 @@ public class MoviesActivity extends AppCompatActivity {
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onClick(Movie movie) {
+        Intent detailIntent = new Intent(this, MovieDetailActivity.class);
+        detailIntent.putExtra(MovieDetailActivity.MOVIE_EXTRA, movie);
+        startActivity(detailIntent);
     }
 }
