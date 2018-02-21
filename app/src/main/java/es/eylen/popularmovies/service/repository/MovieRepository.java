@@ -6,6 +6,8 @@ import android.arch.lifecycle.MutableLiveData;
 import java.util.List;
 
 import es.eylen.popularmovies.BuildConfig;
+import es.eylen.popularmovies.service.helper.network.Resource;
+import es.eylen.popularmovies.service.helper.network.Status;
 import es.eylen.popularmovies.service.model.Movie;
 import es.eylen.popularmovies.service.model.TheMovieDBResponse;
 import okhttp3.HttpUrl;
@@ -58,8 +60,8 @@ public class MovieRepository {
         return movieRepository;
     }
 
-    public LiveData<List<Movie>> loadMovieList(boolean sortByPopularity){
-        MutableLiveData<List<Movie>> movieList = new MutableLiveData<>();
+    public LiveData<Resource<List<Movie>>> loadMovieList(boolean sortByPopularity){
+        MutableLiveData<Resource<List<Movie>>> mutableResponse = new MutableLiveData<>();
         Call<TheMovieDBResponse> call;
         if (sortByPopularity) {
             call = movieDbService.getPopularMovies();
@@ -70,20 +72,21 @@ public class MovieRepository {
         call.enqueue(new Callback<TheMovieDBResponse>() {
             @Override
             public void onResponse(Call<TheMovieDBResponse> call, Response<TheMovieDBResponse> response) {
+                Resource<List<Movie>> result;
                 if (response.isSuccessful()) {
-                    movieList.postValue(response.body().getMovies());
+                    result = new Resource<>(Status.SUCCESS, response.body().getMovies(), "");
                 } else {
                     //TODO implement failure handling
-                    movieList.postValue(null);
+                    result = new Resource<>(Status.ERROR, null, response.message());
                 }
+                mutableResponse.postValue(result);
             }
 
             @Override
             public void onFailure(Call<TheMovieDBResponse> call, Throwable t) {
-                //TODO implement failure handling
-                movieList.postValue(null);
+                mutableResponse.postValue(new Resource<>(Status.ERROR, null, t.getMessage()));
             }
         });
-        return movieList;
+        return mutableResponse;
     }
 }

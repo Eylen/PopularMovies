@@ -7,6 +7,7 @@ import android.arch.lifecycle.ViewModel;
 
 import java.util.List;
 
+import es.eylen.popularmovies.service.helper.network.Resource;
 import es.eylen.popularmovies.service.model.Movie;
 import es.eylen.popularmovies.service.repository.MovieRepository;
 
@@ -15,7 +16,7 @@ import es.eylen.popularmovies.service.repository.MovieRepository;
  */
 
 public class MovieListViewModel extends ViewModel {
-    private LiveData<List<Movie>> movieListObservable;
+    private LiveData<Resource<List<Movie>>> movieListObservable;
     private MutableLiveData<Boolean> sortByPopularity;
     private MovieRepository mRepository;
 
@@ -29,7 +30,7 @@ public class MovieListViewModel extends ViewModel {
 
     }
 
-    public LiveData<List<Movie>> getMovieListObservable(){
+    public LiveData<Resource<List<Movie>>> getMovieListObservable(){
         return this.movieListObservable;
     }
 
@@ -37,7 +38,7 @@ public class MovieListViewModel extends ViewModel {
         this.sortByPopularity.setValue(sortByPopularity);
     }
 
-    public LiveData<List<Movie>> getMovies(boolean sortByPopularity){
+    public LiveData<Resource<List<Movie>>> getMovies(boolean sortByPopularity){
         return mRepository.loadMovieList(sortByPopularity);
     }
 }
