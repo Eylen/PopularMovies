@@ -5,6 +5,7 @@ import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.LifecycleRegistry;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +16,8 @@ import android.view.MenuItem;
 import android.view.View;
 
 import es.eylen.popularmovies.R;
+import es.eylen.popularmovies.databinding.ActivityMoviesBinding;
+import es.eylen.popularmovies.service.helper.network.Status;
 import es.eylen.popularmovies.service.model.Movie;
 import es.eylen.popularmovies.view.adapter.MovieListAdapter;
 import es.eylen.popularmovies.viewmodel.MovieListViewModel;
@@ -30,11 +33,13 @@ public class MoviesActivity extends AppCompatActivity implements MovieListAdapte
     private MovieListViewModel mMovieListViewModel;
 
     //TODO add loading indicator
+    private ActivityMoviesBinding mBinding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_movies);
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_movies);
+        //setContentView(R.layout.activity_movies);
 
         mMovieListAdapter = new MovieListAdapter(this);
         mRecyclerView = findViewById(R.id.movie_list);
@@ -50,9 +55,12 @@ public class MoviesActivity extends AppCompatActivity implements MovieListAdapte
     }
 
     private void observeViewModel(MovieListViewModel viewModel){
-        viewModel.getMovieListObservable().observe(this, movies -> {
-            if (movies != null) {
-                mMovieListAdapter.setMovieList(movies);
+        viewModel.getMovieListObservable().observe(this, moviesResource -> {
+            if (moviesResource != null) {
+                mBinding.setStatus(moviesResource.status);
+                if (moviesResource.status == Status.SUCCESS && moviesResource.data != null) {
+                    mMovieListAdapter.setMovieList(moviesResource.data);
+                }
             }
         });
     }
