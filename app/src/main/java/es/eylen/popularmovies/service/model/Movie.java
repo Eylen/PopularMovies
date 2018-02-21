@@ -5,6 +5,7 @@ import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -29,6 +30,7 @@ public class Movie implements Parcelable{
     private String synopsis;
     @SerializedName(value = "release_date")
     private Date releaseDate;
+    private int year;
 
     public Movie() {
     }
@@ -103,8 +105,14 @@ public class Movie implements Parcelable{
 
     public void setReleaseDate(Date releaseDate) {
         this.releaseDate = releaseDate;
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(this.releaseDate);
+        this.year = calendar.get(Calendar.YEAR);
     }
 
+    public int getYear() {
+        return year;
+    }
 
     @Override
     public String toString() {
@@ -143,6 +151,9 @@ public class Movie implements Parcelable{
         this.poster = parcel.readString();
         this.synopsis = parcel.readString();
         this.releaseDate = new Date(parcel.readLong());
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(this.releaseDate);
+        this.year = calendar.get(Calendar.YEAR);
     }
 
     @Override

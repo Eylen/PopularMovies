@@ -1,6 +1,5 @@
 package es.eylen.popularmovies.viewmodel;
 
-import android.arch.core.util.Function;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Transformations;
@@ -18,13 +17,16 @@ import es.eylen.popularmovies.service.repository.MovieRepository;
 public class MovieListViewModel extends ViewModel {
     private LiveData<List<Movie>> movieListObservable;
     private MutableLiveData<Boolean> sortByPopularity;
+    private MovieRepository mRepository;
 
     public MovieListViewModel(){
         super();
+        mRepository = MovieRepository.getInstance();
         sortByPopularity = new MutableLiveData<>();
         sortByPopularity.setValue(true);
         movieListObservable = Transformations.switchMap(sortByPopularity,
                 input -> getMovies(input));
+
     }
 
     public LiveData<List<Movie>> getMovieListObservable(){
@@ -36,6 +38,6 @@ public class MovieListViewModel extends ViewModel {
     }
 
     public LiveData<List<Movie>> getMovies(boolean sortByPopularity){
-        return MovieRepository.getInstance().loadMovieList(sortByPopularity);
+        return mRepository.loadMovieList(sortByPopularity);
     }
 }

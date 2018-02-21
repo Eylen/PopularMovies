@@ -26,7 +26,6 @@ public class MovieRepository {
     private static MovieRepository movieRepository;
 
     private MovieRepository(){
-        //TODO inject the service
         //NOTE: Interceptor for adding API key to all requests: https://futurestud.io/tutorials/retrofit-2-how-to-add-query-parameters-to-every-request
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
         httpClient.addInterceptor(chain -> {

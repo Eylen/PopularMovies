@@ -1,8 +1,12 @@
 package es.eylen.popularmovies.view.ui;
 
+import android.arch.lifecycle.Lifecycle;
+import android.arch.lifecycle.LifecycleOwner;
+import android.arch.lifecycle.LifecycleRegistry;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,8 +19,10 @@ import es.eylen.popularmovies.service.model.Movie;
 import es.eylen.popularmovies.view.adapter.MovieListAdapter;
 import es.eylen.popularmovies.viewmodel.MovieListViewModel;
 
-public class MoviesActivity extends AppCompatActivity implements MovieListAdapter.MovieClickListener{
+public class MoviesActivity extends AppCompatActivity implements MovieListAdapter.MovieClickListener, LifecycleOwner{
     private static final String TAG = "MoviesActivity";
+
+    private LifecycleRegistry mLifecycleRegistry = new LifecycleRegistry(this);
 
     private RecyclerView mRecyclerView;
     private MovieListAdapter mMovieListAdapter;
@@ -68,5 +74,11 @@ public class MoviesActivity extends AppCompatActivity implements MovieListAdapte
         Intent detailIntent = new Intent(this, MovieDetailActivity.class);
         detailIntent.putExtra(MovieDetailActivity.MOVIE_EXTRA, movie);
         startActivity(detailIntent);
+    }
+
+    @NonNull
+    @Override
+    public Lifecycle getLifecycle() {
+        return mLifecycleRegistry;
     }
 }

@@ -1,17 +1,15 @@
 package es.eylen.popularmovies.view.adapter;
 
+import android.databinding.DataBindingUtil;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-
-import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 import es.eylen.popularmovies.R;
+import es.eylen.popularmovies.databinding.MovieListItemBinding;
 import es.eylen.popularmovies.service.model.Movie;
 
 /**
@@ -28,18 +26,15 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
 
     @Override
     public MovieViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.movie_list_item, null);
-        return new MovieViewHolder(view);
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        MovieListItemBinding binding = DataBindingUtil.inflate(inflater, R.layout.movie_list_item, null, false);
+        return new MovieViewHolder(binding);
     }
 
     @Override
     public void onBindViewHolder(MovieViewHolder holder, int position) {
         Movie movie = movieList.get(position);
-        holder.setPoster(movie.getPoster());
-        if (mClickListener != null) {
-            holder.mPoster.setOnClickListener(view -> mClickListener.onClick(movie));
-        }
+        holder.bind(movie, mClickListener);
     }
 
     @Override
@@ -84,15 +79,17 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
     }
 
     class MovieViewHolder extends RecyclerView.ViewHolder{
-        private ImageView mPoster;
+        private final MovieListItemBinding mBinding;
 
-        MovieViewHolder(View itemView) {
-            super(itemView);
-            mPoster = itemView.findViewById(R.id.movie_item_poster);
+        MovieViewHolder(MovieListItemBinding binding) {
+            super(binding.getRoot());
+            this.mBinding = binding;
         }
 
-        void setPoster(String posterUrl){
-            Picasso.with(mPoster.getContext()).load("http://image.tmdb.org/t/p/w185/" + posterUrl).into(mPoster);
+        public void bind(Movie movie, MovieClickListener mListener){
+            mBinding.setMovie(movie);
+            mBinding.setListener(mListener);
+            mBinding.executePendingBindings();
         }
     }
 
