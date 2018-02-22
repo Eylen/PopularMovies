@@ -2,12 +2,12 @@ package es.eylen.popularmovies.service.repository;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.support.annotation.NonNull;
 
 import java.util.List;
 
 import es.eylen.popularmovies.BuildConfig;
 import es.eylen.popularmovies.service.helper.network.Resource;
-import es.eylen.popularmovies.service.helper.network.Status;
 import es.eylen.popularmovies.service.model.Movie;
 import es.eylen.popularmovies.service.model.TheMovieDBResponse;
 import okhttp3.HttpUrl;
@@ -20,11 +20,10 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
- * Created by eylen on 16/02/2018.
+ * Central Movie repository for application
  */
-
 public class MovieRepository {
-    private TheMovieDbClient movieDbService;
+    private final TheMovieDbClient movieDbService;
     private static MovieRepository movieRepository;
 
     private MovieRepository(){
@@ -62,7 +61,7 @@ public class MovieRepository {
 
     public LiveData<Resource<List<Movie>>> loadMovieList(boolean sortByPopularity){
         MutableLiveData<Resource<List<Movie>>> mutableResponse = new MutableLiveData<>();
-        mutableResponse.postValue(new Resource<>(Status.LOADING, null, ""));
+        mutableResponse.postValue(Resource.loading(null));
         Call<TheMovieDBResponse> call;
         if (sortByPopularity) {
             call = movieDbService.getPopularMovies();
@@ -72,20 +71,19 @@ public class MovieRepository {
 
         call.enqueue(new Callback<TheMovieDBResponse>() {
             @Override
-            public void onResponse(Call<TheMovieDBResponse> call, Response<TheMovieDBResponse> response) {
+            public void onResponse(@NonNull Call<TheMovieDBResponse> call, @NonNull Response<TheMovieDBResponse> response) {
                 Resource<List<Movie>> result;
                 if (response.isSuccessful()) {
-                    result = new Resource<>(Status.SUCCESS, response.body().getMovies(), "");
+                    result = Resource.success((response.body() != null) ? response.body().getMovies() : null);
                 } else {
-                    //TODO implement failure handling
-                    result = new Resource<>(Status.ERROR, null, response.message());
+                    result = Resource.error(response.message(), null);
                 }
                 mutableResponse.postValue(result);
             }
 
             @Override
-            public void onFailure(Call<TheMovieDBResponse> call, Throwable t) {
-                mutableResponse.postValue(new Resource<>(Status.ERROR, null, t.getMessage()));
+            public void onFailure(@NonNull Call<TheMovieDBResponse> call, @NonNull Throwable t) {
+                mutableResponse.postValue(Resource.error(t.getMessage(), null));
             }
         });
         return mutableResponse;

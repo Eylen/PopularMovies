@@ -13,12 +13,11 @@ import es.eylen.popularmovies.databinding.MovieListItemBinding;
 import es.eylen.popularmovies.service.model.Movie;
 
 /**
- * Created by eylen on 16/02/2018.
+ * Recyclerview adapter to show movie list
  */
-
 public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.MovieViewHolder> {
     private List<Movie> movieList;
-    private MovieClickListener mClickListener;
+    private final MovieClickListener mClickListener;
 
     public MovieListAdapter(MovieClickListener movieClickListener) {
         this.mClickListener = movieClickListener;

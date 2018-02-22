@@ -9,9 +9,8 @@ import es.eylen.popularmovies.R;
 import es.eylen.popularmovies.utils.Constants;
 
 /**
- * Created by eylen on 21/02/2018.
+ * Binding Adapter to allow image loading with Picasso
  */
-
 public class ImageBindingAdapter {
     @BindingAdapter(value = "poster")
     public static void setThumbnail(ImageView view, String poster){

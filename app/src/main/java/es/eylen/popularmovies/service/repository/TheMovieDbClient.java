@@ -5,9 +5,8 @@ import retrofit2.Call;
 import retrofit2.http.GET;
 
 /**
- * Created by eylen on 16/02/2018.
+ * TheMovieDB API client for Retrofit2
  */
-
 public interface TheMovieDbClient {
     String API_URL = "https://api.themoviedb.org/3/";
 

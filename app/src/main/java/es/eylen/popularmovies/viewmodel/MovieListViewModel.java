@@ -12,21 +12,19 @@ import es.eylen.popularmovies.service.model.Movie;
 import es.eylen.popularmovies.service.repository.MovieRepository;
 
 /**
- * Created by eylen on 16/02/2018.
+ * ViewModel for MovieList activity
  */
-
 public class MovieListViewModel extends ViewModel {
-    private LiveData<Resource<List<Movie>>> movieListObservable;
-    private MutableLiveData<Boolean> sortByPopularity;
-    private MovieRepository mRepository;
+    private final LiveData<Resource<List<Movie>>> movieListObservable;
+    private final MutableLiveData<Boolean> sortByPopularity;
+    private final MovieRepository mRepository;
 
     public MovieListViewModel(){
         super();
         mRepository = MovieRepository.getInstance();
         sortByPopularity = new MutableLiveData<>();
         sortByPopularity.setValue(true);
-        movieListObservable = Transformations.switchMap(sortByPopularity,
-                input -> getMovies(input));
+        movieListObservable = Transformations.switchMap(sortByPopularity, this::getMovies);
 
     }
 
@@ -38,7 +36,7 @@ public class MovieListViewModel extends ViewModel {
         this.sortByPopularity.setValue(sortByPopularity);
     }
 
-    public LiveData<Resource<List<Movie>>> getMovies(boolean sortByPopularity){
+    private LiveData<Resource<List<Movie>>> getMovies(boolean sortByPopularity){
         return mRepository.loadMovieList(sortByPopularity);
     }
 }

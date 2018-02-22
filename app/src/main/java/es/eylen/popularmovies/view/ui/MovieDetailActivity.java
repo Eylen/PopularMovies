@@ -22,9 +22,7 @@ public class MovieDetailActivity extends AppCompatActivity implements LifecycleO
 
     public static final String MOVIE_EXTRA = "movie";
 
-    private LifecycleRegistry mLifecycleRegistry = new LifecycleRegistry(this);
-
-    private MovieDetailViewModel mModel;
+    private final LifecycleRegistry mLifecycleRegistry = new LifecycleRegistry(this);
 
     private ActivityMovieDetailBinding mBinding;
 
@@ -32,14 +30,16 @@ public class MovieDetailActivity extends AppCompatActivity implements LifecycleO
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_movie_detail);
-        mModel = ViewModelProviders.of(this).get(MovieDetailViewModel.class);
+        MovieDetailViewModel viewModel = ViewModelProviders.of(this).get(MovieDetailViewModel.class);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
-        mModel.getSelected().observe(this, movie -> populateUI(movie));
+        viewModel.getSelected().observe(this, this::populateUI);
 
-        if (getIntent().getExtras().containsKey(MOVIE_EXTRA)){
-            mModel.select(getIntent().getParcelableExtra(MOVIE_EXTRA));
+        if (getIntent().getExtras()!= null && getIntent().getExtras().containsKey(MOVIE_EXTRA)){
+            viewModel.select(getIntent().getParcelableExtra(MOVIE_EXTRA));
         }
     }
 
