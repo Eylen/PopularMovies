@@ -1,45 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
         <import type="es.eylen.popularmovies.service.helper.network.Status"/>
         <import type="android.view.View"/>
         <variable
             name="status"
             type="es.eylen.popularmovies.service.helper.network.Status"/>
+        <variable
+            name="model"
+            type="es.eylen.popularmovies.viewmodel.MovieListViewModel"/>
     </data>
-<android.support.constraint.ConstraintLayout
+
+<android.support.v4.widget.SwipeRefreshLayout
+    android:id="@+id/movie_list_refresh_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="es.eylen.popularmovies.view.ui.MoviesActivity">
-
-    <TextView
-        android:id="@+id/tv_loading"
+    app:refreshing="@{status == Status.LOADING}"
+    app:onRefreshListener="@{() -> model.onRefresh()}">
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
-        android:padding="25dp"
-        android:text="@string/loading"
-        android:textAlignment="center"
-        android:visibility="@{(status == Status.LOADING)?View.VISIBLE:View.GONE}"/>
+        tools:context="es.eylen.popularmovies.view.ui.MoviesActivity">
 
-    <TextView
-        android:id="@+id/tv_error"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:padding="25dp"
-        android:text="@string/error_loading_data"
-        android:textAlignment="center"
-        android:visibility="@{(status == Status.ERROR)?View.VISIBLE:View.GONE}"/>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/movie_list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scrollbars="vertical"
-        android:visibility="@{(status == Status.SUCCESS)?View.VISIBLE:View.GONE}"/>
+        <TextView
+            android:id="@+id/tv_loading"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:padding="25dp"
+            android:text="@string/loading"
+            android:textAlignment="center"
+            android:visibility="@{(status == Status.LOADING)?View.VISIBLE:View.GONE}"/>
 
-</android.support.constraint.ConstraintLayout>
+        <TextView
+            android:id="@+id/tv_error"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:padding="25dp"
+            android:text="@string/error_loading_data"
+            android:textAlignment="center"
+            android:visibility="@{(status == Status.ERROR)?View.VISIBLE:View.GONE}"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/movie_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="vertical"
+            android:visibility="@{(status == Status.SUCCESS)?View.VISIBLE:View.GONE}"/>
+    </android.support.constraint.ConstraintLayout>
+</android.support.v4.widget.SwipeRefreshLayout>
 </layout>
