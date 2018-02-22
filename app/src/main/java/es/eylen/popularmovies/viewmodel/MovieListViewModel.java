@@ -4,6 +4,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModel;
+import android.support.v4.widget.SwipeRefreshLayout;
 
 import java.util.List;
 
@@ -14,7 +15,7 @@ import es.eylen.popularmovies.service.repository.MovieRepository;
 /**
  * ViewModel for MovieList activity
  */
-public class MovieListViewModel extends ViewModel {
+public class MovieListViewModel extends ViewModel implements SwipeRefreshLayout.OnRefreshListener{
     private final LiveData<Resource<List<Movie>>> movieListObservable;
     private final MutableLiveData<Boolean> sortByPopularity;
     private final MovieRepository mRepository;
@@ -38,5 +39,10 @@ public class MovieListViewModel extends ViewModel {
 
     private LiveData<Resource<List<Movie>>> getMovies(boolean sortByPopularity){
         return mRepository.loadMovieList(sortByPopularity);
+    }
+
+    @Override
+    public void onRefresh() {
+        this.sortByPopularity.setValue(this.sortByPopularity.getValue());
     }
 }
