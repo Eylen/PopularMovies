@@ -32,14 +32,13 @@ public class MoviesActivity extends AppCompatActivity implements MovieListAdapte
 
     private MovieListViewModel mMovieListViewModel;
 
-    //TODO add loading indicator
     private ActivityMoviesBinding mBinding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_movies);
-        //setContentView(R.layout.activity_movies);
+        mMovieListViewModel = ViewModelProviders.of(this).get(MovieListViewModel.class);
 
         mMovieListAdapter = new MovieListAdapter(this);
         mRecyclerView = findViewById(R.id.movie_list);
@@ -50,7 +49,6 @@ public class MoviesActivity extends AppCompatActivity implements MovieListAdapte
         mRecyclerView.setDrawingCacheEnabled(true);
         mRecyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_AUTO);
 
-        mMovieListViewModel = ViewModelProviders.of(this).get(MovieListViewModel.class);
         observeViewModel(mMovieListViewModel);
     }
 

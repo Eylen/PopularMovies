@@ -62,6 +62,7 @@ public class MovieRepository {
 
     public LiveData<Resource<List<Movie>>> loadMovieList(boolean sortByPopularity){
         MutableLiveData<Resource<List<Movie>>> mutableResponse = new MutableLiveData<>();
+        mutableResponse.postValue(new Resource<>(Status.LOADING, null, ""));
         Call<TheMovieDBResponse> call;
         if (sortByPopularity) {
             call = movieDbService.getPopularMovies();

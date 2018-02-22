@@ -20,25 +20,27 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:text="LOADING..."
+        android:padding="25dp"
+        android:text="@string/loading"
         android:textAlignment="center"
-        android:visibility="@{status == Status.LOADING?0:2}"/>
+        android:visibility="@{(status == Status.LOADING)?View.VISIBLE:View.GONE}"/>
 
     <TextView
         android:id="@+id/tv_error"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:text="LOADING..."
+        android:padding="25dp"
+        android:text="@string/error_loading_data"
         android:textAlignment="center"
-        android:visibility="@{status == Status.ERROR?0:2}"/>
+        android:visibility="@{(status == Status.ERROR)?View.VISIBLE:View.GONE}"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/movie_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="vertical"
-        android:visibility="@{status == Status.SUCCESS?0:2"/>
+        android:visibility="@{(status == Status.SUCCESS)?View.VISIBLE:View.GONE}"/>
 
 </android.support.constraint.ConstraintLayout>
 </layout>
