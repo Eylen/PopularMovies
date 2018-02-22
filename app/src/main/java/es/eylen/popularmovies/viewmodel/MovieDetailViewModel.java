@@ -7,11 +7,10 @@ import android.arch.lifecycle.ViewModel;
 import es.eylen.popularmovies.service.model.Movie;
 
 /**
- * Created by eylen on 20/02/2018.
+ * ViewModel for MovieDetail activity
  */
-
 public class MovieDetailViewModel extends ViewModel {
-    private MutableLiveData<Movie> mSelectedMovie;
+    private final MutableLiveData<Movie> mSelectedMovie;
 
     public MovieDetailViewModel(){
         super();

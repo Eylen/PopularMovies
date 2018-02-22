@@ -25,9 +25,8 @@ import es.eylen.popularmovies.viewmodel.MovieListViewModel;
 public class MoviesActivity extends AppCompatActivity implements MovieListAdapter.MovieClickListener, LifecycleOwner{
     private static final String TAG = "MoviesActivity";
 
-    private LifecycleRegistry mLifecycleRegistry = new LifecycleRegistry(this);
+    private final LifecycleRegistry mLifecycleRegistry = new LifecycleRegistry(this);
 
-    private RecyclerView mRecyclerView;
     private MovieListAdapter mMovieListAdapter;
 
     private MovieListViewModel mMovieListViewModel;
@@ -41,13 +40,13 @@ public class MoviesActivity extends AppCompatActivity implements MovieListAdapte
         mMovieListViewModel = ViewModelProviders.of(this).get(MovieListViewModel.class);
 
         mMovieListAdapter = new MovieListAdapter(this);
-        mRecyclerView = findViewById(R.id.movie_list);
-        mRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
-        mRecyclerView.setAdapter(mMovieListAdapter);
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setItemViewCacheSize(20);
-        mRecyclerView.setDrawingCacheEnabled(true);
-        mRecyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_AUTO);
+        RecyclerView recyclerView = findViewById(R.id.movie_list);
+        recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+        recyclerView.setAdapter(mMovieListAdapter);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setItemViewCacheSize(20);
+        recyclerView.setDrawingCacheEnabled(true);
+        recyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_AUTO);
 
         observeViewModel(mMovieListViewModel);
     }

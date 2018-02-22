@@ -5,9 +5,8 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 /**
- * Created by eylen on 19/02/2018.
+ * TheMovieDB API response model holder
  */
-
 public class TheMovieDBResponse {
     private int page;
     @SerializedName(value = "total_results")

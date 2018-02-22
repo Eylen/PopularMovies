@@ -9,9 +9,8 @@ import java.util.Calendar;
 import java.util.Date;
 
 /**
- * Created by eylen on 16/02/2018.
+ * Movie model class
  */
-
 public class Movie implements Parcelable{
     private int id;
     @SerializedName(value = "vote_count")
