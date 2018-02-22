@@ -39,6 +39,8 @@ public class MoviesActivity extends AppCompatActivity implements MovieListAdapte
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_movies);
         mMovieListViewModel = ViewModelProviders.of(this).get(MovieListViewModel.class);
 
+        mBinding.setModel(mMovieListViewModel);
+
         mMovieListAdapter = new MovieListAdapter(this);
         RecyclerView recyclerView = findViewById(R.id.movie_list);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
