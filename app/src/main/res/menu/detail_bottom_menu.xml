@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/movie_synopsis_nav" android:title="Synopsis"/>
+    <item android:id="@+id/movie_trailers_nav" android:title="Trailers"/>
+    <item android:id="@+id/movie_reviews_nav" android:title="Reviews"/>
+</menu>

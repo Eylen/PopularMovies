@@ -85,6 +85,19 @@
                 android:layout_weight="3"
                 android:padding="15dp"
                 android:text="@{movie.synopsis}"/>
+            <FrameLayout
+                android:id="@+id/movie_detail_fragment"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="3"/>
+
+            <android.support.design.widget.BottomNavigationView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:menu="@menu/detail_bottom_menu"
+                >
+
+            </android.support.design.widget.BottomNavigationView>
         </LinearLayout>
 
     </ScrollView>
