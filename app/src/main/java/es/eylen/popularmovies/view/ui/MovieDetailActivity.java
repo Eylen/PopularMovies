@@ -7,6 +7,9 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -41,6 +44,8 @@ public class MovieDetailActivity extends AppCompatActivity implements LifecycleO
         if (getIntent().getExtras()!= null && getIntent().getExtras().containsKey(MOVIE_EXTRA)){
             viewModel.select(getIntent().getParcelableExtra(MOVIE_EXTRA));
         }
+
+        loadFragment(new MovieSynopsisFragment());
     }
 
     @Override
@@ -64,5 +69,33 @@ public class MovieDetailActivity extends AppCompatActivity implements LifecycleO
     @Override
     public Lifecycle getLifecycle() {
         return this.mLifecycleRegistry;
+    }
+
+    private BottomNavigationView.OnNavigationItemSelectedListener mNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            Fragment fragment = null;
+            switch (item.getItemId()){
+                case R.id.movie_synopsis_nav:
+                  fragment = new MovieSynopsisFragment();
+                  break;
+                case R.id.movie_reviews_nav:
+                    fragment = new MovieReviewFragment();
+                    break;
+                case R.id.movie_trailers_nav:
+                    fragment = new MovieTrailerFragment();
+                    break;
+            }
+            if (fragment != null) {
+                loadFragment(fragment);
+            }
+            return false;
+        }
+    };
+
+    private void loadFragment(Fragment fragment){
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.movie_detail_fragment, fragment);
+        transaction.commit();
     }
 }
