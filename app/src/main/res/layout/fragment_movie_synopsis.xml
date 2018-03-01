@@ -1,13 +1,17 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             tools:context="es.eylen.popularmovies.view.ui.MovieSynopsisFragment">
+<layout>
+    <data>
+        <variable
+            name="movie"
+            type="es.eylen.popularmovies.service.model.Movie"/>
+    </data>
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
+        android:id="@+id/movie_synopsis"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment"/>
-
-</FrameLayout>
+        android:layout_height="wrap_content"
+        android:padding="15dp"
+        android:text="@{movie.synopsis}"
+        tools:context="es.eylen.popularmovies.view.ui.MovieSynopsisFragment"/>
+</layout>

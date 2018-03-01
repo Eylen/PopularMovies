@@ -18,9 +18,10 @@ import android.view.MenuItem;
 import es.eylen.popularmovies.R;
 import es.eylen.popularmovies.databinding.ActivityMovieDetailBinding;
 import es.eylen.popularmovies.service.model.Movie;
+import es.eylen.popularmovies.view.ui.dummy.DummyContent;
 import es.eylen.popularmovies.viewmodel.MovieDetailViewModel;
 
-public class MovieDetailActivity extends AppCompatActivity implements LifecycleOwner{
+public class MovieDetailActivity extends AppCompatActivity implements LifecycleOwner, BottomNavigationView.OnNavigationItemSelectedListener, MovieReviewFragment.OnListFragmentInteractionListener, MovieTrailerFragment.OnListFragmentInteractionListener{
     private static final String TAG = "MovieDetailActivity";
 
     public static final String MOVIE_EXTRA = "movie";
@@ -28,6 +29,8 @@ public class MovieDetailActivity extends AppCompatActivity implements LifecycleO
     private final LifecycleRegistry mLifecycleRegistry = new LifecycleRegistry(this);
 
     private ActivityMovieDetailBinding mBinding;
+
+    private BottomNavigationView mBottomNavigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +48,10 @@ public class MovieDetailActivity extends AppCompatActivity implements LifecycleO
             viewModel.select(getIntent().getParcelableExtra(MOVIE_EXTRA));
         }
 
-        loadFragment(new MovieSynopsisFragment());
+        mBottomNavigationView = findViewById(R.id.bottom_detail_nav);
+        mBottomNavigationView.setOnNavigationItemSelectedListener(this);
+
+        loadFragment(MovieSynopsisFragment.newInstance());
     }
 
     @Override
@@ -71,31 +77,39 @@ public class MovieDetailActivity extends AppCompatActivity implements LifecycleO
         return this.mLifecycleRegistry;
     }
 
-    private BottomNavigationView.OnNavigationItemSelectedListener mNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            Fragment fragment = null;
-            switch (item.getItemId()){
-                case R.id.movie_synopsis_nav:
-                  fragment = new MovieSynopsisFragment();
-                  break;
-                case R.id.movie_reviews_nav:
-                    fragment = new MovieReviewFragment();
-                    break;
-                case R.id.movie_trailers_nav:
-                    fragment = new MovieTrailerFragment();
-                    break;
-            }
-            if (fragment != null) {
-                loadFragment(fragment);
-            }
-            return false;
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        Fragment fragment = null;
+        switch (item.getItemId()){
+            case R.id.movie_synopsis_nav:
+                fragment = MovieSynopsisFragment.newInstance();
+                break;
+            case R.id.movie_reviews_nav:
+                fragment = MovieReviewFragment.newInstance(1);
+                break;
+            case R.id.movie_trailers_nav:
+                fragment = MovieTrailerFragment.newInstance(1);
+                break;
         }
-    };
+        if (fragment != null) {
+            loadFragment(fragment);
+        }
+        return true;
+    }
 
     private void loadFragment(Fragment fragment){
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.movie_detail_fragment, fragment);
         transaction.commit();
+    }
+
+    @Override
+    public void onReviewClicked(DummyContent.DummyItem item) {
+
+    }
+
+    @Override
+    public void onListFragmentInteraction(DummyContent.DummyItem item) {
+
     }
 }
