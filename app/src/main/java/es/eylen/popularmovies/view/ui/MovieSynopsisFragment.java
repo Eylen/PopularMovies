@@ -18,7 +18,7 @@ import es.eylen.popularmovies.viewmodel.MovieDetailViewModel;
  * create an instance of this fragment.
  */
 public class MovieSynopsisFragment extends Fragment {
-    MovieDetailViewModel mModel;
+    private MovieDetailViewModel mModel;
     private FragmentMovieSynopsisBinding mBinding;
 
     public MovieSynopsisFragment() {
@@ -33,8 +33,7 @@ public class MovieSynopsisFragment extends Fragment {
      */
     // TODO: Rename and change types and number of parameters
     public static MovieSynopsisFragment newInstance() {
-        MovieSynopsisFragment fragment = new MovieSynopsisFragment();
-        return fragment;
+        return new MovieSynopsisFragment();
     }
 
     @Override

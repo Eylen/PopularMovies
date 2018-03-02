@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import es.eylen.popularmovies.R;
 import es.eylen.popularmovies.databinding.ActivityMovieDetailBinding;
 import es.eylen.popularmovies.service.model.Movie;
+import es.eylen.popularmovies.service.model.Trailer;
 import es.eylen.popularmovies.view.ui.dummy.DummyContent;
 import es.eylen.popularmovies.viewmodel.MovieDetailViewModel;
 
@@ -109,7 +110,7 @@ public class MovieDetailActivity extends AppCompatActivity implements LifecycleO
     }
 
     @Override
-    public void onListFragmentInteraction(DummyContent.DummyItem item) {
+    public void onListFragmentInteraction(Trailer item) {
 
     }
 }

@@ -9,7 +9,11 @@ import java.util.List;
 import es.eylen.popularmovies.BuildConfig;
 import es.eylen.popularmovies.service.helper.network.Resource;
 import es.eylen.popularmovies.service.model.Movie;
-import es.eylen.popularmovies.service.model.TheMovieDBResponse;
+import es.eylen.popularmovies.service.model.Review;
+import es.eylen.popularmovies.service.model.Trailer;
+import es.eylen.popularmovies.service.repository.response.MovieReviewsResponse;
+import es.eylen.popularmovies.service.repository.response.MovieTrailersResponse;
+import es.eylen.popularmovies.service.repository.response.MoviesResponse;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -62,16 +66,16 @@ public class MovieRepository {
     public LiveData<Resource<List<Movie>>> loadMovieList(boolean sortByPopularity){
         MutableLiveData<Resource<List<Movie>>> mutableResponse = new MutableLiveData<>();
         mutableResponse.postValue(Resource.loading(null));
-        Call<TheMovieDBResponse> call;
+        Call<MoviesResponse> call;
         if (sortByPopularity) {
             call = movieDbService.getPopularMovies();
         } else {
             call = movieDbService.getTopRatedMovies();
         }
 
-        call.enqueue(new Callback<TheMovieDBResponse>() {
+        call.enqueue(new Callback<MoviesResponse>() {
             @Override
-            public void onResponse(@NonNull Call<TheMovieDBResponse> call, @NonNull Response<TheMovieDBResponse> response) {
+            public void onResponse(@NonNull Call<MoviesResponse> call, @NonNull Response<MoviesResponse> response) {
                 Resource<List<Movie>> result;
                 if (response.isSuccessful()) {
                     result = Resource.success((response.body() != null) ? response.body().getMovies() : null);
@@ -82,7 +86,57 @@ public class MovieRepository {
             }
 
             @Override
-            public void onFailure(@NonNull Call<TheMovieDBResponse> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<MoviesResponse> call, @NonNull Throwable t) {
+                mutableResponse.postValue(Resource.error(t.getMessage(), null));
+            }
+        });
+        return mutableResponse;
+    }
+
+    public LiveData<Resource<List<Trailer>>> loadMovieTrailers(int movieId){
+        MutableLiveData<Resource<List<Trailer>>> mutableResponse = new MutableLiveData<>();
+        mutableResponse.postValue(Resource.loading(null));
+
+        Call<MovieTrailersResponse> call = movieDbService.getMovieTrailers(movieId);
+        call.enqueue(new Callback<MovieTrailersResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<MovieTrailersResponse> call, @NonNull Response<MovieTrailersResponse> response) {
+                Resource<List<Trailer>> result;
+                if (response.isSuccessful()){
+                    result = Resource.success(response.body().getTrailers());
+                } else {
+                    result = Resource.error(response.message(), null);
+                }
+                mutableResponse.postValue(result);
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<MovieTrailersResponse> call, @NonNull Throwable t) {
+                mutableResponse.postValue(Resource.error(t.getMessage(), null));
+            }
+        });
+        return mutableResponse;
+    }
+
+    public LiveData<Resource<List<Review>>> loadMovieReviews(int movieId){
+        MutableLiveData<Resource<List<Review>>> mutableResponse = new MutableLiveData<>();
+        mutableResponse.postValue(Resource.loading(null));
+
+        Call<MovieReviewsResponse> call = movieDbService.getMovieReviews(movieId);
+        call.enqueue(new Callback<MovieReviewsResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<MovieReviewsResponse> call, @NonNull Response<MovieReviewsResponse> response) {
+                Resource<List<Review>> result;
+                if (response.isSuccessful()){
+                    result = Resource.success(response.body().getReviews());
+                } else {
+                    result = Resource.error(response.message(), null);
+                }
+                mutableResponse.postValue(result);
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<MovieReviewsResponse> call, @NonNull Throwable t) {
                 mutableResponse.postValue(Resource.error(t.getMessage(), null));
             }
         });
