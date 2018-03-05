@@ -7,10 +7,12 @@
             name="movie"
             type="es.eylen.popularmovies.service.model.Movie"/>
     </data>
+
     <ScrollView
 
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/detailBackground"
         android:fillViewport="true"
         tools:context="es.eylen.popularmovies.view.ui.MovieDetailActivity">
 
@@ -84,6 +86,7 @@
                 android:id="@+id/movie_detail_fragment"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
+                android:background="@color/detailFragmentBackground"
                 app:layout_constraintBottom_toTopOf="@+id/bottom_detail_nav"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

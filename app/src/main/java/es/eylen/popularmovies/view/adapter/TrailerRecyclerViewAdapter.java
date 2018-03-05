@@ -3,25 +3,21 @@ package es.eylen.popularmovies.view.adapter;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import es.eylen.popularmovies.R;
+import es.eylen.popularmovies.databinding.FragmentTrailerBinding;
 import es.eylen.popularmovies.service.model.Trailer;
 import es.eylen.popularmovies.view.ui.MovieTrailerFragment.OnListFragmentInteractionListener;
-import es.eylen.popularmovies.view.ui.dummy.DummyContent.DummyItem;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
+ * {@link RecyclerView.Adapter} that can display a {@link Trailer} and makes a call to the
  * specified {@link OnListFragmentInteractionListener}.
- * TODO: Replace the implementation with code for your data type.
  */
-public class TrailerRecyclerViewAdapter extends RecyclerView.Adapter<TrailerRecyclerViewAdapter.ViewHolder> {
+public class TrailerRecyclerViewAdapter extends RecyclerView.Adapter<TrailerRecyclerViewAdapter.TrailerViewHolder> {
 
     private List<Trailer> mValues;
     private final OnListFragmentInteractionListener mListener;
@@ -67,28 +63,15 @@ public class TrailerRecyclerViewAdapter extends RecyclerView.Adapter<TrailerRecy
         }
     }
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_trailer, parent, false);
-        return new ViewHolder(view);
+    public TrailerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        FragmentTrailerBinding binding = FragmentTrailerBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+        return new TrailerViewHolder(binding);
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).getId());
-        holder.mContentView.setText(mValues.get(position).getName());
-
-        holder.mView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (null != mListener) {
-                    // Notify the active callbacks interface (the activity, if the
-                    // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(holder.mItem);
-                }
-            }
-        });
+    public void onBindViewHolder(final TrailerViewHolder holder, int position) {
+        Trailer trailer = mValues.get(position);
+        holder.bind(trailer, mListener);
     }
 
     @Override
@@ -96,22 +79,24 @@ public class TrailerRecyclerViewAdapter extends RecyclerView.Adapter<TrailerRecy
         return mValues.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        public final View mView;
-        public final TextView mIdView;
-        public final TextView mContentView;
-        public Trailer mItem;
+    public class TrailerViewHolder extends RecyclerView.ViewHolder {
+        private FragmentTrailerBinding mBinding;
 
-        public ViewHolder(View view) {
-            super(view);
-            mView = view;
-            mIdView = view.findViewById(R.id.id);
-            mContentView = view.findViewById(R.id.content);
+        TrailerViewHolder(FragmentTrailerBinding binding) {
+            super(binding.getRoot());
+            this.mBinding = binding;
         }
+
+        public void bind(Trailer trailer, OnListFragmentInteractionListener listener){
+            mBinding.setTrailer(trailer);
+            mBinding.setListener(listener);
+            mBinding.executePendingBindings();
+        }
+
 
         @Override
         public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
+            return super.toString() + " '" + mBinding.getTrailer().getId() + "'";
         }
     }
 }
