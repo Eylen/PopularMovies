@@ -8,8 +8,8 @@
         />
     <item android:id="@+id/movie_trailers_nav"
           android:title="Trailers"
-        android:icon="@drawable/ic_rate_review_black_24dp"/>
+        android:icon="@drawable/ic_play_arrow_black_24dp"/>
     <item android:id="@+id/movie_reviews_nav"
           android:title="Reviews"
-        android:icon="@drawable/ic_play_arrow_black_24dp"/>
+        android:icon="@drawable/ic_rate_review_black_24dp"/>
 </menu>

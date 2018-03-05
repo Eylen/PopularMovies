@@ -13,6 +13,8 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         buildConfigField "String", "MOVIE_DB_API_KEY", THE_MOVIE_DB_API_KEY
+
+        vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
         release {
