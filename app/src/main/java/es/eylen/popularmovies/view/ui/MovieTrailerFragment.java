@@ -35,11 +35,9 @@ public class MovieTrailerFragment extends Fragment {
     public MovieTrailerFragment() {
     }
 
-    // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
-    public static MovieTrailerFragment newInstance(int columnCount) {
-        MovieTrailerFragment fragment = new MovieTrailerFragment();
-        return fragment;
+    public static MovieTrailerFragment newInstance() {
+        return new MovieTrailerFragment();
     }
 
     @Override
@@ -99,7 +97,6 @@ public class MovieTrailerFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onListFragmentInteraction(Trailer item);
     }
 }

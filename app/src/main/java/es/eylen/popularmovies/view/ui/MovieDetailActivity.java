@@ -19,10 +19,9 @@ import es.eylen.popularmovies.R;
 import es.eylen.popularmovies.databinding.ActivityMovieDetailBinding;
 import es.eylen.popularmovies.service.model.Movie;
 import es.eylen.popularmovies.service.model.Trailer;
-import es.eylen.popularmovies.view.ui.dummy.DummyContent;
 import es.eylen.popularmovies.viewmodel.MovieDetailViewModel;
 
-public class MovieDetailActivity extends AppCompatActivity implements LifecycleOwner, BottomNavigationView.OnNavigationItemSelectedListener, MovieReviewFragment.OnListFragmentInteractionListener, MovieTrailerFragment.OnListFragmentInteractionListener{
+public class MovieDetailActivity extends AppCompatActivity implements LifecycleOwner, BottomNavigationView.OnNavigationItemSelectedListener, MovieTrailerFragment.OnListFragmentInteractionListener{
     private static final String TAG = "MovieDetailActivity";
 
     public static final String MOVIE_EXTRA = "movie";
@@ -86,10 +85,10 @@ public class MovieDetailActivity extends AppCompatActivity implements LifecycleO
                 fragment = MovieSynopsisFragment.newInstance();
                 break;
             case R.id.movie_reviews_nav:
-                fragment = MovieReviewFragment.newInstance(1);
+                fragment = MovieReviewFragment.newInstance();
                 break;
             case R.id.movie_trailers_nav:
-                fragment = MovieTrailerFragment.newInstance(1);
+                fragment = MovieTrailerFragment.newInstance();
                 break;
         }
         if (fragment != null) {
@@ -102,11 +101,6 @@ public class MovieDetailActivity extends AppCompatActivity implements LifecycleO
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.movie_detail_fragment, fragment);
         transaction.commit();
-    }
-
-    @Override
-    public void onReviewClicked(DummyContent.DummyItem item) {
-
     }
 
     @Override
