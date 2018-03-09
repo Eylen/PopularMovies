@@ -98,7 +98,7 @@ public class MoviesProvider extends ContentProvider {
     @Nullable
     @Override
     public String getType(@NonNull Uri uri) {
-        return null;
+        throw new UnsupportedOperationException("getType not allowed");
     }
 
     @Nullable
@@ -113,8 +113,23 @@ public class MoviesProvider extends ContentProvider {
     }
 
     @Override
-    public int update(@NonNull Uri uri, @Nullable ContentValues contentValues, @Nullable String s, @Nullable String[] strings) {
-        throw new UnsupportedOperationException("Pending update implementation");
+    public int update(@NonNull Uri uri, @Nullable ContentValues contentValues, @Nullable String whereClause, @Nullable String[] whereValues) {
+        SQLiteDatabase db = mMoviesHelper.getWritableDatabase();
+        int rowsUpdated = 0;
+        switch (sUriMatcher.match(uri)){
+            case CODE_SINGLE_MOVIE:
+                rowsUpdated = db.update(MoviesContract.MovieEntry.TABLE_MOVIES,
+                        contentValues,
+                        whereClause,
+                        whereValues);
+                break;
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }
+        if (rowsUpdated > 0){
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+        return rowsUpdated;
     }
 
     @Override
