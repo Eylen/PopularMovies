@@ -4,7 +4,10 @@ import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.LifecycleRegistry;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -19,6 +22,7 @@ import es.eylen.popularmovies.R;
 import es.eylen.popularmovies.databinding.ActivityMovieDetailBinding;
 import es.eylen.popularmovies.service.model.Movie;
 import es.eylen.popularmovies.service.model.Trailer;
+import es.eylen.popularmovies.utils.Constants;
 import es.eylen.popularmovies.viewmodel.MovieDetailViewModel;
 
 public class MovieDetailActivity extends AppCompatActivity implements LifecycleOwner, BottomNavigationView.OnNavigationItemSelectedListener, MovieTrailerFragment.OnListFragmentInteractionListener{
@@ -105,6 +109,19 @@ public class MovieDetailActivity extends AppCompatActivity implements LifecycleO
 
     @Override
     public void onListFragmentInteraction(Trailer item) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        Uri.Builder builder = new Uri.Builder();
+        builder.scheme(Constants.YOUTUBE_SCHEME)
+                .authority(Constants.YOUTUBE_BASE_URL)
+                .path(Constants.YOUTUBE_WATCH_PATH)
+                .appendQueryParameter("v", item.getKey());
+        intent.setData(builder.build());
 
+        PackageManager packageManager = getPackageManager();
+        if (intent.resolveActivity(packageManager) != null) {
+            startActivity(intent);
+        } else {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(Constants.YOUTUBE_PLAY_STORE)));
+        }
     }
 }
