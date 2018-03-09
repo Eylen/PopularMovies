@@ -6,6 +6,16 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textColor">@color/colorPrimaryText</item>
     </style>
 
+    <style name="AppTheme.Fragment" parent="AppTheme">
+        <item name="android:textColor">@color/colorPrimaryText</item>
+        <item name="android:background">@color/colorPrimaryLight</item>
+    </style>
+
+    <style name="AppTheme.CardView" parent="CardView.Light">
+        <item name="cardBackgroundColor">@color/detailFragmentBackground</item>
+        <item name="android:textColor">@color/colorSecondaryText</item>
+    </style>
 </resources>

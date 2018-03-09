@@ -8,20 +8,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import es.eylen.popularmovies.databinding.FragmentMovieSynopsisBinding;
+import es.eylen.popularmovies.databinding.FragmentMovieInfoBinding;
 import es.eylen.popularmovies.service.model.Movie;
 import es.eylen.popularmovies.viewmodel.MovieDetailViewModel;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link MovieSynopsisFragment#newInstance} factory method to
+ * Use the {@link MovieInfoFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MovieSynopsisFragment extends Fragment {
+public class MovieInfoFragment extends Fragment {
     private MovieDetailViewModel mModel;
-    private FragmentMovieSynopsisBinding mBinding;
+    private FragmentMovieInfoBinding mBinding;
 
-    public MovieSynopsisFragment() {
+    public MovieInfoFragment() {
         // Required empty public constructor
     }
 
@@ -29,18 +29,17 @@ public class MovieSynopsisFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @return A new instance of fragment MovieSynopsisFragment.
+     * @return A new instance of fragment MovieInfoFragment.
      */
-    // TODO: Rename and change types and number of parameters
-    public static MovieSynopsisFragment newInstance() {
-        return new MovieSynopsisFragment();
+    public static MovieInfoFragment newInstance() {
+        return new MovieInfoFragment();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        mBinding = FragmentMovieSynopsisBinding.inflate(inflater, container, false);
+        mBinding = FragmentMovieInfoBinding.inflate(inflater, container, false);
         return mBinding.getRoot();
     }
 

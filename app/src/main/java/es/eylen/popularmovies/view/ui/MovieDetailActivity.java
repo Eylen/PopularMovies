@@ -51,7 +51,7 @@ public class MovieDetailActivity extends AppCompatActivity implements LifecycleO
         mBottomNavigationView = findViewById(R.id.bottom_detail_nav);
         mBottomNavigationView.setOnNavigationItemSelectedListener(this);
 
-        loadFragment(MovieSynopsisFragment.newInstance());
+        loadFragment(MovieInfoFragment.newInstance());
     }
 
     @Override
@@ -82,7 +82,7 @@ public class MovieDetailActivity extends AppCompatActivity implements LifecycleO
         Fragment fragment = null;
         switch (item.getItemId()){
             case R.id.movie_synopsis_nav:
-                fragment = MovieSynopsisFragment.newInstance();
+                fragment = MovieInfoFragment.newInstance();
                 break;
             case R.id.movie_reviews_nav:
                 fragment = MovieReviewFragment.newInstance();
