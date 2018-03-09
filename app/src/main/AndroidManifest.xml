@@ -23,6 +23,11 @@
             android:parentActivityName=".view.ui.MoviesActivity">
             <meta-data android:name="android.support.PARENT_ACTIVITY" android:value=".view.ui.MoviesActivity"/>
         </activity>
+        
+        <provider
+            android:authorities="@string/content_authority"
+            android:name=".data.MoviesProvider"
+            android:exported="false"/>
     </application>
 
 </manifest>

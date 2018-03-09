@@ -6,6 +6,5 @@
     <string name="error_loading_data">An error has occurred loading data.\nPlease try again later.</string>
     <string name="loading">Loading…\nPlease wait</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="content_authority">es.eylen.popularmovies</string>
 </resources>
