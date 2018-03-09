@@ -25,6 +25,7 @@ public class MoviesContract {
         public static final String COLUMN_POSTER_PATH = "poster_path";
         public static final String COLUMN_SYNOPSIS = "synopsis";
         public static final String COLUMN_RELEASE_DATE = "release_date";
+        public static final String COLUMN_FAVORITE = "favorite";
 
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon()
                 .appendPath(TABLE_MOVIES).build();
