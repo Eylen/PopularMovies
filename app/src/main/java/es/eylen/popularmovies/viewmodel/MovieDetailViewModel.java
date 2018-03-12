@@ -1,9 +1,10 @@
 package es.eylen.popularmovies.viewmodel;
 
+import android.app.Application;
+import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Transformations;
-import android.arch.lifecycle.ViewModel;
 
 import java.util.List;
 
@@ -16,15 +17,15 @@ import es.eylen.popularmovies.service.repository.MovieRepository;
 /**
  * ViewModel for MovieDetail activity
  */
-public class MovieDetailViewModel extends ViewModel {
+public class MovieDetailViewModel extends AndroidViewModel{
     private final MutableLiveData<Movie> mSelectedMovie;
     private final LiveData<Resource<List<Trailer>>> movieTrailersObservable;
     private final LiveData<Resource<List<Review>>> movieReviewsObservable;
     private final MovieRepository mRepository;
 
-    public MovieDetailViewModel(){
-        super();
-        mRepository = MovieRepository.getInstance();
+    public MovieDetailViewModel(Application application){
+        super(application);
+        mRepository = MovieRepository.getInstance(application);
         mSelectedMovie = new MutableLiveData<>();
         movieTrailersObservable = Transformations.switchMap(mSelectedMovie, this::getTrailers);
         movieReviewsObservable = Transformations.switchMap(mSelectedMovie, this::getReviews);

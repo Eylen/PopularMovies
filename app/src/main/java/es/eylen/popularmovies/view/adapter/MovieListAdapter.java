@@ -43,6 +43,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
 
     public void setMovieList(final List<Movie> movieList){
         if (this.movieList == null){
+            notifyDataSetChanged();
             this.movieList = movieList;
             notifyItemRangeInserted(0, movieList.size());
         } else {

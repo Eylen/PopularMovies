@@ -1,9 +1,10 @@
 package es.eylen.popularmovies.viewmodel;
 
+import android.app.Application;
+import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Transformations;
-import android.arch.lifecycle.ViewModel;
 import android.support.v4.widget.SwipeRefreshLayout;
 
 import java.util.List;
@@ -15,17 +16,20 @@ import es.eylen.popularmovies.service.repository.MovieRepository;
 /**
  * ViewModel for MovieList activity
  */
-public class MovieListViewModel extends ViewModel implements SwipeRefreshLayout.OnRefreshListener{
+public class MovieListViewModel extends AndroidViewModel implements SwipeRefreshLayout.OnRefreshListener{
     private final LiveData<Resource<List<Movie>>> movieListObservable;
     private final MutableLiveData<Boolean> sortByPopularity;
+    private final MutableLiveData<Boolean> showFavorites;
     private final MovieRepository mRepository;
 
-    public MovieListViewModel(){
-        super();
-        mRepository = MovieRepository.getInstance();
+    public MovieListViewModel(Application application){
+        super(application);
+        mRepository = MovieRepository.getInstance(application);
         sortByPopularity = new MutableLiveData<>();
         sortByPopularity.setValue(true);
-        movieListObservable = Transformations.switchMap(sortByPopularity, this::getMovies);
+        showFavorites = new MutableLiveData<>();
+        showFavorites.setValue(false);
+        movieListObservable = Transformations.switchMap(sortByPopularity, input -> getMovies(showFavorites.getValue(), input));
 
     }
 
@@ -37,8 +41,8 @@ public class MovieListViewModel extends ViewModel implements SwipeRefreshLayout.
         this.sortByPopularity.setValue(sortByPopularity);
     }
 
-    private LiveData<Resource<List<Movie>>> getMovies(boolean sortByPopularity){
-        return mRepository.loadMovieList(sortByPopularity);
+    private LiveData<Resource<List<Movie>>> getMovies(boolean showFavorites, boolean sortByPopularity){
+        return mRepository.loadMovieList(showFavorites, sortByPopularity);
     }
 
     @Override

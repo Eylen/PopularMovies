@@ -2,11 +2,18 @@ package es.eylen.popularmovies.service.repository;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
 import android.support.annotation.NonNull;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import es.eylen.popularmovies.BuildConfig;
+import es.eylen.popularmovies.data.MoviesContract;
 import es.eylen.popularmovies.service.helper.network.Resource;
 import es.eylen.popularmovies.service.model.Movie;
 import es.eylen.popularmovies.service.model.Review;
@@ -30,7 +37,9 @@ public class MovieRepository {
     private final TheMovieDbClient movieDbService;
     private static MovieRepository movieRepository;
 
-    private MovieRepository(){
+    private ContentResolver mContentResolver;
+
+    private MovieRepository(Context context){
         //NOTE: Interceptor for adding API key to all requests: https://futurestud.io/tutorials/retrofit-2-how-to-add-query-parameters-to-every-request
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
         httpClient.addInterceptor(chain -> {
@@ -54,16 +63,18 @@ public class MovieRepository {
                 .client(httpClient.build())
                 .build();
         movieDbService = retrofit.create(TheMovieDbClient.class);
+
+        mContentResolver = context.getContentResolver();
     }
 
-    public synchronized static MovieRepository getInstance(){
+    public synchronized static MovieRepository getInstance(Context context){
         if (movieRepository == null){
-            movieRepository = new MovieRepository();
+            movieRepository = new MovieRepository(context);
         }
         return movieRepository;
     }
 
-    public LiveData<Resource<List<Movie>>> loadMovieList(boolean sortByPopularity){
+    public LiveData<Resource<List<Movie>>> loadMovieList(boolean showFavorites, boolean sortByPopularity){
         MutableLiveData<Resource<List<Movie>>> mutableResponse = new MutableLiveData<>();
         mutableResponse.postValue(Resource.loading(null));
         Call<MoviesResponse> call;
@@ -78,16 +89,21 @@ public class MovieRepository {
             public void onResponse(@NonNull Call<MoviesResponse> call, @NonNull Response<MoviesResponse> response) {
                 Resource<List<Movie>> result;
                 if (response.isSuccessful()) {
-                    result = Resource.success((response.body() != null) ? response.body().getMovies() : null);
+                    List<Movie> movieList = (response.body() != null) ? response.body().getMovies() : null;
+                    addToContentProvider(movieList);
+                    result = Resource.success(movieList);
                 } else {
-                    result = Resource.error(response.message(), null);
+                    //Retrieve from database
+                    result = Resource.success(fetchFromContentProvider(showFavorites, sortByPopularity));
+                    //result = Resource.error(response.message(), null);
                 }
                 mutableResponse.postValue(result);
             }
 
             @Override
             public void onFailure(@NonNull Call<MoviesResponse> call, @NonNull Throwable t) {
-                mutableResponse.postValue(Resource.error(t.getMessage(), null));
+                //mutableResponse.postValue(Resource.error(t.getMessage(), null));
+                mutableResponse.postValue(Resource.success(fetchFromContentProvider(showFavorites, sortByPopularity)));
             }
         });
         return mutableResponse;
@@ -141,5 +157,58 @@ public class MovieRepository {
             }
         });
         return mutableResponse;
+    }
+
+    private void addToContentProvider(List<Movie> movieList){
+        ContentValues[] contentValues = new ContentValues[movieList.size()];
+        ContentValues values;
+        Movie movie;
+        for (int i = 0; i < movieList.size(); i++){
+            movie = movieList.get(i);
+            values = new ContentValues();
+            values.put(MoviesContract.MovieEntry.COLUMN_ID, movie.getId());
+            values.put(MoviesContract.MovieEntry.COLUMN_ORIGINAL_TITLE, movie.getOriginalTitle());
+            values.put(MoviesContract.MovieEntry.COLUMN_TITLE, movie.getTitle());
+            values.put(MoviesContract.MovieEntry.COLUMN_POPULARITY, movie.getPopularity());
+            values.put(MoviesContract.MovieEntry.COLUMN_POSTER_PATH, movie.getPoster());
+            values.put(MoviesContract.MovieEntry.COLUMN_RELEASE_DATE, movie.getReleaseDate().getTime()/1000);//Stored as seconds
+            values.put(MoviesContract.MovieEntry.COLUMN_SYNOPSIS, movie.getSynopsis());
+            values.put(MoviesContract.MovieEntry.COLUMN_VOTE_AVERAGE, movie.getVoteAverage());
+            values.put(MoviesContract.MovieEntry.COLUMN_VOTE_COUNT, movie.getVoteCount());
+            values.put(MoviesContract.MovieEntry.COLUMN_FAVORITE, 0);
+            contentValues[i] = values;
+        }
+        mContentResolver.bulkInsert(MoviesContract.MovieEntry.CONTENT_URI, contentValues);
+    }
+
+    private List<Movie> fetchFromContentProvider(boolean showFavorites, boolean sortByPopularity){
+        List<Movie> movieList = new ArrayList<>();
+        String[] projection = new String[]{};
+        String selection = null;
+        String[] selectionArgs = new String[]{};
+        String sortOrder = null;
+        if (showFavorites){
+            selection = MoviesContract.MovieEntry.COLUMN_FAVORITE + " = ?";
+            selectionArgs = new String[]{String.valueOf(1)};
+        } else {
+            sortOrder = sortByPopularity?MoviesContract.MovieEntry.COLUMN_POPULARITY: MoviesContract.MovieEntry.COLUMN_VOTE_AVERAGE;
+        }
+
+        Cursor cursor = mContentResolver.query(MoviesContract.MovieEntry.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+        while (cursor.moveToNext()){
+            Movie movie = new Movie();
+            movie.setId(cursor.getInt(cursor.getColumnIndex(MoviesContract.MovieEntry.COLUMN_ID)));
+            movie.setOriginalTitle(cursor.getString(cursor.getColumnIndex(MoviesContract.MovieEntry.COLUMN_ORIGINAL_TITLE)));
+            movie.setTitle(cursor.getString(cursor.getColumnIndex(MoviesContract.MovieEntry.COLUMN_TITLE)));
+            movie.setPoster(cursor.getString(cursor.getColumnIndex(MoviesContract.MovieEntry.COLUMN_POSTER_PATH)));
+            movie.setPopularity(cursor.getFloat(cursor.getColumnIndex(MoviesContract.MovieEntry.COLUMN_POPULARITY)));
+            movie.setReleaseDate(new Date(cursor.getInt(cursor.getColumnIndex(MoviesContract.MovieEntry.COLUMN_RELEASE_DATE)) * 1000));
+            movie.setSynopsis(cursor.getString(cursor.getColumnIndex(MoviesContract.MovieEntry.COLUMN_SYNOPSIS)));
+            movie.setVoteAverage(cursor.getFloat(cursor.getColumnIndex(MoviesContract.MovieEntry.COLUMN_VOTE_AVERAGE)));
+            movie.setVoteCount(cursor.getInt(cursor.getColumnIndex(MoviesContract.MovieEntry.COLUMN_VOTE_COUNT)));
+            movieList.add(movie);
+        }
+        cursor.close();
+        return movieList;
     }
 }

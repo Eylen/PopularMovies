@@ -20,6 +20,7 @@ public class MoviesDBHelper extends SQLiteOpenHelper {
         final String SQL_CREATE_MOVIES_TABLE = "CREATE TABLE " + MoviesContract.MovieEntry.TABLE_MOVIES
                 + "("
                 + MoviesContract.MovieEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + MoviesContract.MovieEntry.COLUMN_ID + " INTEGER NOT NULL, "
                 + MoviesContract.MovieEntry.COLUMN_TITLE + " TEXT NOT NULL, "
                 + MoviesContract.MovieEntry.COLUMN_ORIGINAL_TITLE + " TEXT NOT NULL, "
                 + MoviesContract.MovieEntry.COLUMN_POPULARITY + " REAL NOT NULL, "
@@ -28,7 +29,8 @@ public class MoviesDBHelper extends SQLiteOpenHelper {
                 + MoviesContract.MovieEntry.COLUMN_POSTER_PATH + " TEXT NOT NULL, "
                 + MoviesContract.MovieEntry.COLUMN_SYNOPSIS + " TEXT NOT NULL,"
                 + MoviesContract.MovieEntry.COLUMN_RELEASE_DATE + " INTEGER NOT NULL, "
-                + MoviesContract.MovieEntry.COLUMN_FAVORITE + " INTEGER DEFAULT 0"
+                + MoviesContract.MovieEntry.COLUMN_FAVORITE + " INTEGER DEFAULT 0,"
+                + " CONSTRAINT movie_id_unique UNIQUE (" + MoviesContract.MovieEntry.COLUMN_ID + ")"
                 + ")";
 
         sqLiteDatabase.execSQL(SQL_CREATE_MOVIES_TABLE);

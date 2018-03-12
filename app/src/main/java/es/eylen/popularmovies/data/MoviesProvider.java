@@ -46,7 +46,7 @@ public class MoviesProvider extends ContentProvider {
                 int rowsInserted = 0;
                 try {
                     for (ContentValues value : values){
-                        long _id = db.insert(MoviesContract.MovieEntry.TABLE_MOVIES, null, value);
+                        long _id = db.insertWithOnConflict(MoviesContract.MovieEntry.TABLE_MOVIES, null, value, SQLiteDatabase.CONFLICT_REPLACE);
                         if (_id != -1){
                             rowsInserted++;
                         }
