@@ -191,7 +191,7 @@ public class MovieRepository {
             selection = MoviesContract.MovieEntry.COLUMN_FAVORITE + " = ?";
             selectionArgs = new String[]{String.valueOf(1)};
         } else {
-            sortOrder = sortByPopularity?MoviesContract.MovieEntry.COLUMN_POPULARITY: MoviesContract.MovieEntry.COLUMN_VOTE_AVERAGE;
+            sortOrder = (sortByPopularity?MoviesContract.MovieEntry.COLUMN_POPULARITY: MoviesContract.MovieEntry.COLUMN_VOTE_AVERAGE) + " DESC";
         }
 
         Cursor cursor = mContentResolver.query(MoviesContract.MovieEntry.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
