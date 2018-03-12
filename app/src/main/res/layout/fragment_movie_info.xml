@@ -1,6 +1,8 @@
-<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+<layout xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:android="http://schemas.android.com/apk/res/android">
     <data>
+        <import type="android.support.v4.content.ContextCompat" />
         <variable
             name="movie"
             type="es.eylen.popularmovies.service.model.Movie"/>
@@ -72,6 +74,18 @@
             android:layout_margin="5dp"
             app:layout_constraintTop_toTopOf="@+id/movie_info_horizontal_guideline"
             />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/floatingActionButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="5dp"
+            android:clickable="true"
+            android:focusable="true"
+            app:layout_constraintBottom_toBottomOf="@+id/movie_info_divider_view"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/movie_info_divider_view"
+            app:favored="@{movie.favored}"/>
 
         <TextView
             android:id="@+id/movie_synopsis"
