@@ -46,9 +46,15 @@ public class MoviesProvider extends ContentProvider {
                 int rowsInserted = 0;
                 try {
                     for (ContentValues value : values){
-                        long _id = db.insertWithOnConflict(MoviesContract.MovieEntry.TABLE_MOVIES, null, value, SQLiteDatabase.CONFLICT_REPLACE);
+                        long _id = db.insertWithOnConflict(MoviesContract.MovieEntry.TABLE_MOVIES, null, value, SQLiteDatabase.CONFLICT_IGNORE);
                         if (_id != -1){
                             rowsInserted++;
+                        } else {
+                            int updated = db.update(MoviesContract.MovieEntry.TABLE_MOVIES, value, MoviesContract.MovieEntry.COLUMN_ID + " = ?",
+                                    new String[]{String.valueOf(value.getAsInteger(MoviesContract.MovieEntry.COLUMN_ID))});
+                            if (updated > 0){
+                                rowsInserted++;
+                            }
                         }
                     }
                     db.setTransactionSuccessful();
@@ -82,7 +88,7 @@ public class MoviesProvider extends ContentProvider {
             case CODE_SINGLE_MOVIE:
                 cursor = db.query(MoviesContract.MovieEntry.TABLE_MOVIES,
                         projection,
-                        MoviesContract.MovieEntry._ID + " = ?",
+                        MoviesContract.MovieEntry.COLUMN_ID + " = ?",
                         new String[]{String.valueOf(ContentUris.parseId(uri))},
                         null,
                         null,

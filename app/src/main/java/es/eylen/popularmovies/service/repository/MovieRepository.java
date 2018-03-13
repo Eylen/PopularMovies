@@ -159,6 +159,31 @@ public class MovieRepository {
         return mutableResponse;
     }
 
+    public boolean loadMovieFavoriteState(int movieId){
+        String[] projection = new String[]{};
+
+        Cursor cursor = mContentResolver.query(MoviesContract.MovieEntry.CONTENT_URI.buildUpon().appendPath(String.valueOf(movieId)).build(),
+                projection, null, null, null);
+        boolean isFavorite = false;
+        if (cursor != null) {
+            if (cursor.moveToNext()) {
+                isFavorite = cursor.getInt(cursor.getColumnIndex(MoviesContract.MovieEntry.COLUMN_FAVORITE)) == 1;
+            }
+
+            cursor.close();
+        }
+        return isFavorite;
+    }
+
+    public void updateMovieFavoriteState(int movieId, boolean isFavorite){
+        ContentValues values = new ContentValues();
+        values.put(MoviesContract.MovieEntry.COLUMN_FAVORITE, isFavorite?1:0);
+        String where = MoviesContract.MovieEntry.COLUMN_ID + " = ?";
+        String[] selectionArgs = new String[]{String.valueOf(movieId)};
+        mContentResolver.update(MoviesContract.MovieEntry.CONTENT_URI.buildUpon().appendPath(String.valueOf(movieId)).build(),
+                values, where, selectionArgs);
+    }
+
     private void addToContentProvider(List<Movie> movieList){
         ContentValues[] contentValues = new ContentValues[movieList.size()];
         ContentValues values;
@@ -175,7 +200,6 @@ public class MovieRepository {
             values.put(MoviesContract.MovieEntry.COLUMN_SYNOPSIS, movie.getSynopsis());
             values.put(MoviesContract.MovieEntry.COLUMN_VOTE_AVERAGE, movie.getVoteAverage());
             values.put(MoviesContract.MovieEntry.COLUMN_VOTE_COUNT, movie.getVoteCount());
-            values.put(MoviesContract.MovieEntry.COLUMN_FAVORITE, 0);
             contentValues[i] = values;
         }
         mContentResolver.bulkInsert(MoviesContract.MovieEntry.CONTENT_URI, contentValues);

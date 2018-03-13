@@ -33,6 +33,8 @@ public class MovieDetailViewModel extends AndroidViewModel{
 
 
     public void select(Movie movie){
+        boolean isFavorite = mRepository.loadMovieFavoriteState(movie.getId());
+        movie.setFavored(isFavorite);
         mSelectedMovie.setValue(movie);
     }
 
@@ -54,5 +56,14 @@ public class MovieDetailViewModel extends AndroidViewModel{
 
     private LiveData<Resource<List<Review>>> getReviews(Movie movie){
         return mRepository.loadMovieReviews(movie.getId());
+    }
+
+    public void updateFavoriteState(boolean isFavorite){
+        Movie movie = mSelectedMovie.getValue();
+        if (movie != null) {
+            movie.setFavored(isFavorite);
+            mRepository.updateMovieFavoriteState(movie.getId(), isFavorite);
+            mSelectedMovie.postValue(movie);
+        }
     }
 }

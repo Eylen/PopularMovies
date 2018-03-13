@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 
 import es.eylen.popularmovies.databinding.FragmentMovieInfoBinding;
 import es.eylen.popularmovies.service.model.Movie;
+import es.eylen.popularmovies.view.listener.MovieDetailActionListener;
 import es.eylen.popularmovies.viewmodel.MovieDetailViewModel;
 
 /**
@@ -17,7 +18,7 @@ import es.eylen.popularmovies.viewmodel.MovieDetailViewModel;
  * Use the {@link MovieInfoFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MovieInfoFragment extends Fragment {
+public class MovieInfoFragment extends Fragment implements MovieDetailActionListener{
     private MovieDetailViewModel mModel;
     private FragmentMovieInfoBinding mBinding;
 
@@ -40,6 +41,7 @@ public class MovieInfoFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         mBinding = FragmentMovieInfoBinding.inflate(inflater, container, false);
+        mBinding.setHandler(this);
         return mBinding.getRoot();
     }
 
@@ -52,5 +54,10 @@ public class MovieInfoFragment extends Fragment {
 
     private void populateUI(Movie movie){
         mBinding.setMovie(movie);
+    }
+
+    @Override
+    public void changeFavoriteState(Movie movie) {
+        mModel.updateFavoriteState(!movie.isFavored());
     }
 }

@@ -25,7 +25,8 @@ import es.eylen.popularmovies.service.model.Trailer;
 import es.eylen.popularmovies.utils.Constants;
 import es.eylen.popularmovies.viewmodel.MovieDetailViewModel;
 
-public class MovieDetailActivity extends AppCompatActivity implements LifecycleOwner, BottomNavigationView.OnNavigationItemSelectedListener, MovieTrailerFragment.OnListFragmentInteractionListener{
+public class MovieDetailActivity extends AppCompatActivity implements LifecycleOwner,
+        BottomNavigationView.OnNavigationItemSelectedListener, MovieTrailerFragment.OnListFragmentInteractionListener{
     private static final String TAG = "MovieDetailActivity";
 
     public static final String MOVIE_EXTRA = "movie";

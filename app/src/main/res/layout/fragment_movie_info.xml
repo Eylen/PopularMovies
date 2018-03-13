@@ -6,6 +6,9 @@
         <variable
             name="movie"
             type="es.eylen.popularmovies.service.model.Movie"/>
+        <variable
+            name="handler"
+            type="es.eylen.popularmovies.view.listener.MovieDetailActionListener"/>
     </data>
 
     <android.support.constraint.ConstraintLayout
@@ -85,7 +88,8 @@
             app:layout_constraintBottom_toBottomOf="@+id/movie_info_divider_view"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/movie_info_divider_view"
-            app:favored="@{movie.favored}"/>
+            app:favored="@{movie.favored}"
+            android:onClick="@{() -> handler.changeFavoriteState(movie)}"/>
 
         <TextView
             android:id="@+id/movie_synopsis"
