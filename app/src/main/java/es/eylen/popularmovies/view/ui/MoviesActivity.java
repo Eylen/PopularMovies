@@ -8,10 +8,10 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -19,13 +19,17 @@ import es.eylen.popularmovies.R;
 import es.eylen.popularmovies.databinding.ActivityMoviesBinding;
 import es.eylen.popularmovies.service.helper.network.Status;
 import es.eylen.popularmovies.service.model.Movie;
+import es.eylen.popularmovies.utils.Constants;
 import es.eylen.popularmovies.view.adapter.MovieListAdapter;
 import es.eylen.popularmovies.viewmodel.MovieListViewModel;
 
-public class MoviesActivity extends AppCompatActivity implements MovieListAdapter.MovieClickListener, LifecycleOwner{
+public class MoviesActivity extends AppCompatActivity implements MovieListAdapter.MovieClickListener, LifecycleOwner,
+        BottomNavigationView.OnNavigationItemSelectedListener{
     private static final String TAG = "MoviesActivity";
 
     private final LifecycleRegistry mLifecycleRegistry = new LifecycleRegistry(this);
+
+    private BottomNavigationView mBottomNavigationView;
 
     private RecyclerView mRecyclerView;
     private MovieListAdapter mMovieListAdapter;
@@ -52,6 +56,9 @@ public class MoviesActivity extends AppCompatActivity implements MovieListAdapte
         mRecyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_AUTO);
 
         observeViewModel(mMovieListViewModel);
+
+        mBottomNavigationView = findViewById(R.id.bottom_detail_nav);
+        mBottomNavigationView.setOnNavigationItemSelectedListener(this);
     }
 
     private void observeViewModel(MovieListViewModel viewModel){
@@ -67,18 +74,6 @@ public class MoviesActivity extends AppCompatActivity implements MovieListAdapte
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.sort_menu, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        mMovieListViewModel.setSortByPopularity(item.getItemId() == R.id.sort_by_popularity);
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
     public void onClick(Movie movie) {
         Intent detailIntent = new Intent(this, MovieDetailActivity.class);
         detailIntent.putExtra(MovieDetailActivity.MOVIE_EXTRA, movie);
@@ -89,5 +84,23 @@ public class MoviesActivity extends AppCompatActivity implements MovieListAdapte
     @Override
     public Lifecycle getLifecycle() {
         return mLifecycleRegistry;
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        String filterSortOption = null;
+        switch (item.getItemId()){
+            case R.id.movie_popular_nav:
+                filterSortOption = Constants.SORT_BY_POPULARITY;
+                break;
+            case R.id.movie_top_rated_nav:
+                filterSortOption = Constants.SORT_BY_TOP_RATED;
+                break;
+            case R.id.movie_favorites_nav:
+                filterSortOption = Constants.FILTER_BY_FAVORITES;
+                break;
+        }
+        mMovieListViewModel.setFilterSortOption(filterSortOption);
+        return true;
     }
 }

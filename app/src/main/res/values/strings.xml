@@ -11,4 +11,8 @@
     <string name="synopsis">Synopsis</string>
     <string name="trailers">Trailers</string>
     <string name="reviews">Reviews</string>
+
+    <string name="top_rated">Top rated</string>
+    <string name="popular">Most popular</string>
+    <string name="favorites">Favorites</string>
 </resources>

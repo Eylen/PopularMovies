@@ -12,41 +12,38 @@ import java.util.List;
 import es.eylen.popularmovies.service.helper.network.Resource;
 import es.eylen.popularmovies.service.model.Movie;
 import es.eylen.popularmovies.service.repository.MovieRepository;
+import es.eylen.popularmovies.utils.Constants;
 
 /**
  * ViewModel for MovieList activity
  */
 public class MovieListViewModel extends AndroidViewModel implements SwipeRefreshLayout.OnRefreshListener{
     private final LiveData<Resource<List<Movie>>> movieListObservable;
-    private final MutableLiveData<Boolean> sortByPopularity;
-    private final MutableLiveData<Boolean> showFavorites;
+    private final MutableLiveData<String> mFilterSortOption;
     private final MovieRepository mRepository;
 
     public MovieListViewModel(Application application){
         super(application);
         mRepository = MovieRepository.getInstance(application);
-        sortByPopularity = new MutableLiveData<>();
-        sortByPopularity.setValue(true);
-        showFavorites = new MutableLiveData<>();
-        showFavorites.setValue(false);
-        movieListObservable = Transformations.switchMap(sortByPopularity, input -> getMovies(showFavorites.getValue(), input));
-
+        mFilterSortOption = new MutableLiveData<>();
+        mFilterSortOption.setValue(Constants.SORT_BY_POPULARITY);
+        movieListObservable = Transformations.switchMap(mFilterSortOption, this::getMovies);
     }
 
     public LiveData<Resource<List<Movie>>> getMovieListObservable(){
         return this.movieListObservable;
     }
 
-    public void setSortByPopularity(boolean sortByPopularity){
-        this.sortByPopularity.setValue(sortByPopularity);
+    public void setFilterSortOption(String filterSortOption){
+        this.mFilterSortOption.setValue(filterSortOption);
     }
 
-    private LiveData<Resource<List<Movie>>> getMovies(boolean showFavorites, boolean sortByPopularity){
-        return mRepository.loadMovieList(showFavorites, sortByPopularity);
+    private LiveData<Resource<List<Movie>>> getMovies(String filterSortOption){
+        return mRepository.loadMovieList(filterSortOption);
     }
 
     @Override
     public void onRefresh() {
-        this.sortByPopularity.setValue(this.sortByPopularity.getValue());
+        this.mFilterSortOption.setValue(this.mFilterSortOption.getValue());
     }
 }

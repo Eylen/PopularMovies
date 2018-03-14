@@ -21,6 +21,7 @@ import es.eylen.popularmovies.service.model.Trailer;
 import es.eylen.popularmovies.service.repository.response.MovieReviewsResponse;
 import es.eylen.popularmovies.service.repository.response.MovieTrailersResponse;
 import es.eylen.popularmovies.service.repository.response.MoviesResponse;
+import es.eylen.popularmovies.utils.Constants;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -74,38 +75,47 @@ public class MovieRepository {
         return movieRepository;
     }
 
-    public LiveData<Resource<List<Movie>>> loadMovieList(boolean showFavorites, boolean sortByPopularity){
+    public LiveData<Resource<List<Movie>>> loadMovieList(String filterSortOption){
         MutableLiveData<Resource<List<Movie>>> mutableResponse = new MutableLiveData<>();
         mutableResponse.postValue(Resource.loading(null));
         Call<MoviesResponse> call;
-        if (sortByPopularity) {
-            call = movieDbService.getPopularMovies();
-        } else {
-            call = movieDbService.getTopRatedMovies();
+        switch (filterSortOption){
+            case Constants.SORT_BY_POPULARITY:
+                call = movieDbService.getPopularMovies();
+                break;
+            case Constants.SORT_BY_TOP_RATED:
+                call = movieDbService.getTopRatedMovies();
+                break;
+            default:
+                call = null;
         }
 
-        call.enqueue(new Callback<MoviesResponse>() {
-            @Override
-            public void onResponse(@NonNull Call<MoviesResponse> call, @NonNull Response<MoviesResponse> response) {
-                Resource<List<Movie>> result;
-                if (response.isSuccessful()) {
-                    List<Movie> movieList = (response.body() != null) ? response.body().getMovies() : null;
-                    addToContentProvider(movieList);
-                    result = Resource.success(movieList);
-                } else {
-                    //Retrieve from database
-                    result = Resource.success(fetchFromContentProvider(showFavorites, sortByPopularity));
-                    //result = Resource.error(response.message(), null);
+        if (call != null) {
+            call.enqueue(new Callback<MoviesResponse>() {
+                @Override
+                public void onResponse(@NonNull Call<MoviesResponse> call, @NonNull Response<MoviesResponse> response) {
+                    Resource<List<Movie>> result;
+                    if (response.isSuccessful()) {
+                        List<Movie> movieList = (response.body() != null) ? response.body().getMovies() : null;
+                        addToContentProvider(movieList);
+                        result = Resource.success(movieList);
+                    } else {
+                        //Retrieve from database
+                        result = Resource.success(fetchFromContentProvider(filterSortOption));
+                        //result = Resource.error(response.message(), null);
+                    }
+                    mutableResponse.postValue(result);
                 }
-                mutableResponse.postValue(result);
-            }
 
-            @Override
-            public void onFailure(@NonNull Call<MoviesResponse> call, @NonNull Throwable t) {
-                //mutableResponse.postValue(Resource.error(t.getMessage(), null));
-                mutableResponse.postValue(Resource.success(fetchFromContentProvider(showFavorites, sortByPopularity)));
-            }
-        });
+                @Override
+                public void onFailure(@NonNull Call<MoviesResponse> call, @NonNull Throwable t) {
+                    //mutableResponse.postValue(Resource.error(t.getMessage(), null));
+                    mutableResponse.postValue(Resource.success(fetchFromContentProvider(filterSortOption)));
+                }
+            });
+        } else {
+            mutableResponse.postValue(Resource.success(fetchFromContentProvider(filterSortOption)));
+        }
         return mutableResponse;
     }
 
@@ -205,17 +215,17 @@ public class MovieRepository {
         mContentResolver.bulkInsert(MoviesContract.MovieEntry.CONTENT_URI, contentValues);
     }
 
-    private List<Movie> fetchFromContentProvider(boolean showFavorites, boolean sortByPopularity){
+    private List<Movie> fetchFromContentProvider(String filterSortOption){
         List<Movie> movieList = new ArrayList<>();
         String[] projection = new String[]{};
         String selection = null;
         String[] selectionArgs = new String[]{};
         String sortOrder = null;
-        if (showFavorites){
+        if (Constants.FILTER_BY_FAVORITES.equals(filterSortOption)){
             selection = MoviesContract.MovieEntry.COLUMN_FAVORITE + " = ?";
             selectionArgs = new String[]{String.valueOf(1)};
         } else {
-            sortOrder = (sortByPopularity?MoviesContract.MovieEntry.COLUMN_POPULARITY: MoviesContract.MovieEntry.COLUMN_VOTE_AVERAGE) + " DESC";
+            sortOrder = (Constants.SORT_BY_POPULARITY.equals(filterSortOption)?MoviesContract.MovieEntry.COLUMN_POPULARITY: MoviesContract.MovieEntry.COLUMN_VOTE_AVERAGE) + " DESC";
         }
 
         Cursor cursor = mContentResolver.query(MoviesContract.MovieEntry.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
