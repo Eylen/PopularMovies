@@ -31,6 +31,8 @@ public class Movie implements Parcelable{
     private Date releaseDate;
     private int year;
 
+    private boolean favored;
+
     public Movie() {
     }
 
@@ -113,6 +115,14 @@ public class Movie implements Parcelable{
         return year;
     }
 
+    public boolean isFavored() {
+        return favored;
+    }
+
+    public void setFavored(boolean favored) {
+        this.favored = favored;
+    }
+
     @Override
     public String toString() {
         return "Movie{" +
@@ -125,6 +135,7 @@ public class Movie implements Parcelable{
                 ", poster='" + poster + '\'' +
                 ", synopsis='" + synopsis + '\'' +
                 ", releaseDate=" + releaseDate +
+                ", favored=" + favored +
                 '}';
     }
 
@@ -153,6 +164,7 @@ public class Movie implements Parcelable{
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(this.releaseDate);
         this.year = calendar.get(Calendar.YEAR);
+        this.favored = parcel.readInt() == 1;
     }
 
     @Override
@@ -171,5 +183,6 @@ public class Movie implements Parcelable{
         parcel.writeString(poster);
         parcel.writeString(synopsis);
         parcel.writeLong(releaseDate.getTime());
+        parcel.writeInt(favored ?1:0);
     }
 }

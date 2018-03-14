@@ -11,8 +11,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:fullBackupContent="@xml/backup_descriptor">
-        <activity android:name=".view.ui.MoviesActivity">
+        android:fullBackupContent="@xml/backup_descriptor"
+        android:name=".PopularMoviesApplication">
+        <activity android:name=".view.ui.MoviesActivity"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -23,6 +25,11 @@
             android:parentActivityName=".view.ui.MoviesActivity">
             <meta-data android:name="android.support.PARENT_ACTIVITY" android:value=".view.ui.MoviesActivity"/>
         </activity>
+        
+        <provider
+            android:authorities="@string/content_authority"
+            android:name=".data.MoviesProvider"
+            android:exported="false"/>
     </application>
 
 </manifest>

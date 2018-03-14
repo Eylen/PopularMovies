@@ -1,13 +1,15 @@
-package es.eylen.popularmovies.service.model;
+package es.eylen.popularmovies.service.repository.response;
 
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
+import es.eylen.popularmovies.service.model.Movie;
+
 /**
  * TheMovieDB API response model holder
  */
-public class TheMovieDBResponse {
+public class MoviesResponse {
     private int page;
     @SerializedName(value = "total_results")
     private int totalResults;
@@ -16,7 +18,7 @@ public class TheMovieDBResponse {
     @SerializedName(value = "results")
     private List<Movie> movies;
 
-    public TheMovieDBResponse() {
+    public MoviesResponse() {
     }
 
     public int getPage() {
