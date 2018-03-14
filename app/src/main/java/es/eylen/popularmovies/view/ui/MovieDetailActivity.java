@@ -14,8 +14,11 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.ShareActionProvider;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 
 import es.eylen.popularmovies.R;
@@ -33,30 +36,45 @@ public class MovieDetailActivity extends AppCompatActivity implements LifecycleO
 
     private final LifecycleRegistry mLifecycleRegistry = new LifecycleRegistry(this);
 
+    private MovieDetailViewModel mViewModel;
     private ActivityMovieDetailBinding mBinding;
 
     private BottomNavigationView mBottomNavigationView;
+    private ShareActionProvider mShareActionProvider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_movie_detail);
-        MovieDetailViewModel viewModel = ViewModelProviders.of(this).get(MovieDetailViewModel.class);
+        mViewModel = ViewModelProviders.of(this).get(MovieDetailViewModel.class);
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        viewModel.getSelected().observe(this, this::populateUI);
+        mViewModel.getSelected().observe(this, this::populateUI);
+        mViewModel.getMovieTrailersObservable().observe(this, listResource -> {
+            if (listResource != null && listResource.data != null && listResource.data.size() > 0){
+                setShareIntent(listResource.data.get(0));
+            }
+        });
 
         if (getIntent().getExtras()!= null && getIntent().getExtras().containsKey(MOVIE_EXTRA)){
-            viewModel.select(getIntent().getParcelableExtra(MOVIE_EXTRA));
+            mViewModel.select(getIntent().getParcelableExtra(MOVIE_EXTRA));
         }
 
         mBottomNavigationView = findViewById(R.id.bottom_detail_nav);
         mBottomNavigationView.setOnNavigationItemSelectedListener(this);
 
         loadFragment(MovieInfoFragment.newInstance());
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.detail_menu, menu);
+        MenuItem itemShare = menu.findItem(R.id.menu_item_share);
+        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(itemShare);
+        return true;
     }
 
     @Override
@@ -123,6 +141,15 @@ public class MovieDetailActivity extends AppCompatActivity implements LifecycleO
             startActivity(intent);
         } else {
             startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(Constants.YOUTUBE_PLAY_STORE)));
+        }
+    }
+
+    private void setShareIntent(Trailer trailer){
+        if (mShareActionProvider != null){
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.setType("text/plain");
+            shareIntent.putExtra(Intent.EXTRA_TEXT, Constants.YOUTUBE_SCHEME + "://" +Constants.YOUTUBE_BASE_URL + "/" + Constants.YOUTUBE_WATCH_PATH + "?w=" +trailer.getKey());
+            mShareActionProvider.setShareIntent(shareIntent);
         }
     }
 }
