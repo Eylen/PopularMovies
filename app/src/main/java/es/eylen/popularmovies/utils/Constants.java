@@ -6,6 +6,7 @@ package es.eylen.popularmovies.utils;
  */
 public class Constants {
     public static final String POSTER_THUMBNAIL_URL = "http://image.tmdb.org/t/p/w185/";
+    public static final String BACKDROP_THUMBNAIL_URL = "http://image.tmdb.org/t/p/w780/";
 
     public static final String YOUTUBE_SCHEME = "http";
     public static final String YOUTUBE_BASE_URL = "www.youtube.com";

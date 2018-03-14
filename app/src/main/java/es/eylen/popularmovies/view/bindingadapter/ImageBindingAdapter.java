@@ -20,4 +20,13 @@ public class ImageBindingAdapter {
                 .error(R.drawable.placeholder)
                 .into(view);
     }
+
+    @BindingAdapter(value = "backdrop")
+    public static void setBackdrop(ImageView view, String poster){
+        Picasso.with(view.getContext())
+                .load(Constants.BACKDROP_THUMBNAIL_URL + poster)
+                .placeholder(R.drawable.placeholder)
+                .error(R.drawable.placeholder)
+                .into(view);
+    }
 }

@@ -14,7 +14,7 @@
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="5dp">
+        >
 
         <android.support.constraint.Guideline
             android:id="@+id/movie_info_vertical_guideline"
@@ -30,19 +30,33 @@
             android:orientation="horizontal"
             app:layout_constraintGuide_percent="0.4"/>
 
+
+        <ImageView
+            android:id="@+id/movie_backdrop"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:contentDescription="@null"
+            android:scaleType="centerCrop"
+            app:backdrop="@{movie.backdrop}"
+            app:layout_constraintBottom_toBottomOf="@id/movie_info_horizontal_guideline"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
         <ImageView
             android:id="@+id/movie_poster"
             android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_margin="8dp"
             android:contentDescription="@null"
             android:scaleType="fitCenter"
-            app:layout_constraintBottom_toTopOf="@id/movie_info_horizontal_guideline"
             app:layout_constraintEnd_toStartOf="@+id/movie_info_vertical_guideline"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:poster="@{movie.poster}"/>
+            app:layout_constraintTop_toTopOf="@id/movie_info_horizontal_guideline"
+            app:layout_constraintBottom_toBottomOf="@id/movie_info_horizontal_guideline"
+            app:poster="@{movie.poster}"
+            tools:layout_editor_absoluteY="205dp"/>
 
 
         <TextView
@@ -51,13 +65,13 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
+            android:layout_marginTop="8dp"
             android:text="@{String.valueOf(movie.year)}"
             android:textColor="@color/colorAccent"
             android:textStyle="italic"
-            app:layout_constraintBottom_toBottomOf="@+id/movie_info_horizontal_guideline"
             app:layout_constraintEnd_toEndOf="@+id/movie_rating"
             app:layout_constraintStart_toStartOf="@+id/movie_info_vertical_guideline"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="@+id/movie_info_horizontal_guideline"/>
 
         <RatingBar
             android:id="@+id/movie_rating"
@@ -70,15 +84,6 @@
             app:layout_constraintStart_toStartOf="@+id/movie_info_vertical_guideline"
             app:layout_constraintTop_toBottomOf="@+id/movie_year"/>
 
-        <View
-            android:id="@+id/movie_info_divider_view"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/colorAccent"
-            android:layout_margin="5dp"
-            app:layout_constraintTop_toTopOf="@+id/movie_info_horizontal_guideline"
-            />
-
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/mark_favorite_button"
             android:layout_width="wrap_content"
@@ -86,11 +91,11 @@
             android:layout_marginEnd="5dp"
             android:clickable="true"
             android:focusable="true"
-            app:layout_constraintBottom_toBottomOf="@+id/movie_info_divider_view"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/movie_info_divider_view"
+            android:onClick="@{() -> handler.changeFavoriteState(movie)}"
             app:favored="@{movie.favored}"
-            android:onClick="@{() -> handler.changeFavoriteState(movie)}"/>
+            app:layout_constraintBottom_toBottomOf="@+id/movie_backdrop"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/movie_backdrop"/>
 
         <TextView
             android:id="@+id/movie_synopsis"
@@ -101,7 +106,7 @@
             android:layout_marginTop="8dp"
             android:padding="15dp"
             android:text="@{movie.synopsis}"
-            app:layout_constraintTop_toTopOf="@+id/movie_info_divider_view"
+            app:layout_constraintTop_toBottomOf="@+id/movie_rating"
             tools:context="es.eylen.popularmovies.view.ui.MovieInfoFragment"/>
     </android.support.constraint.ConstraintLayout>
 </layout>

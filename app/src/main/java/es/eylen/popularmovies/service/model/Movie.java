@@ -24,6 +24,8 @@ public class Movie implements Parcelable{
     private String originalTitle;
     @SerializedName(value = "poster_path")
     private String poster;
+    @SerializedName(value = "backdrop_path")
+    private String backdrop;
 
     @SerializedName(value = "overview")
     private String synopsis;
@@ -123,6 +125,14 @@ public class Movie implements Parcelable{
         this.favored = favored;
     }
 
+    public String getBackdrop() {
+        return backdrop;
+    }
+
+    public void setBackdrop(String backdrop) {
+        this.backdrop = backdrop;
+    }
+
     @Override
     public String toString() {
         return "Movie{" +
@@ -133,6 +143,7 @@ public class Movie implements Parcelable{
                 ", title='" + title + '\'' +
                 ", originalTitle='" + originalTitle + '\'' +
                 ", poster='" + poster + '\'' +
+                ", backdrop='" + backdrop + '\'' +
                 ", synopsis='" + synopsis + '\'' +
                 ", releaseDate=" + releaseDate +
                 ", favored=" + favored +
@@ -159,6 +170,7 @@ public class Movie implements Parcelable{
         this.title = parcel.readString();
         this.originalTitle = parcel.readString();
         this.poster = parcel.readString();
+        this.backdrop = parcel.readString();
         this.synopsis = parcel.readString();
         this.releaseDate = new Date(parcel.readLong());
         Calendar calendar = Calendar.getInstance();
@@ -181,6 +193,7 @@ public class Movie implements Parcelable{
         parcel.writeString(title);
         parcel.writeString(originalTitle);
         parcel.writeString(poster);
+        parcel.writeString(backdrop);
         parcel.writeString(synopsis);
         parcel.writeLong(releaseDate.getTime());
         parcel.writeInt(favored ?1:0);

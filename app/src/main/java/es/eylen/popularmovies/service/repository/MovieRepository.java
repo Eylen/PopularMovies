@@ -206,6 +206,7 @@ public class MovieRepository {
             values.put(MoviesContract.MovieEntry.COLUMN_TITLE, movie.getTitle());
             values.put(MoviesContract.MovieEntry.COLUMN_POPULARITY, movie.getPopularity());
             values.put(MoviesContract.MovieEntry.COLUMN_POSTER_PATH, movie.getPoster());
+            values.put(MoviesContract.MovieEntry.COLUMN_BACKDROP_PATH, movie.getBackdrop());
             values.put(MoviesContract.MovieEntry.COLUMN_RELEASE_DATE, movie.getReleaseDate().getTime()/1000);//Stored as seconds
             values.put(MoviesContract.MovieEntry.COLUMN_SYNOPSIS, movie.getSynopsis());
             values.put(MoviesContract.MovieEntry.COLUMN_VOTE_AVERAGE, movie.getVoteAverage());
@@ -235,6 +236,7 @@ public class MovieRepository {
             movie.setOriginalTitle(cursor.getString(cursor.getColumnIndex(MoviesContract.MovieEntry.COLUMN_ORIGINAL_TITLE)));
             movie.setTitle(cursor.getString(cursor.getColumnIndex(MoviesContract.MovieEntry.COLUMN_TITLE)));
             movie.setPoster(cursor.getString(cursor.getColumnIndex(MoviesContract.MovieEntry.COLUMN_POSTER_PATH)));
+            movie.setBackdrop(cursor.getString(cursor.getColumnIndex(MoviesContract.MovieEntry.COLUMN_BACKDROP_PATH)));
             movie.setPopularity(cursor.getFloat(cursor.getColumnIndex(MoviesContract.MovieEntry.COLUMN_POPULARITY)));
             movie.setReleaseDate(new Date(cursor.getInt(cursor.getColumnIndex(MoviesContract.MovieEntry.COLUMN_RELEASE_DATE)) * 1000));
             movie.setSynopsis(cursor.getString(cursor.getColumnIndex(MoviesContract.MovieEntry.COLUMN_SYNOPSIS)));
