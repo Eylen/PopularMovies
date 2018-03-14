@@ -238,7 +238,7 @@ public class MovieRepository {
             movie.setPoster(cursor.getString(cursor.getColumnIndex(MoviesContract.MovieEntry.COLUMN_POSTER_PATH)));
             movie.setBackdrop(cursor.getString(cursor.getColumnIndex(MoviesContract.MovieEntry.COLUMN_BACKDROP_PATH)));
             movie.setPopularity(cursor.getFloat(cursor.getColumnIndex(MoviesContract.MovieEntry.COLUMN_POPULARITY)));
-            movie.setReleaseDate(new Date(cursor.getInt(cursor.getColumnIndex(MoviesContract.MovieEntry.COLUMN_RELEASE_DATE)) * 1000));
+            movie.setReleaseDate(new Date((long)cursor.getInt(cursor.getColumnIndex(MoviesContract.MovieEntry.COLUMN_RELEASE_DATE)) * 1000));
             movie.setSynopsis(cursor.getString(cursor.getColumnIndex(MoviesContract.MovieEntry.COLUMN_SYNOPSIS)));
             movie.setVoteAverage(cursor.getFloat(cursor.getColumnIndex(MoviesContract.MovieEntry.COLUMN_VOTE_AVERAGE)));
             movie.setVoteCount(cursor.getInt(cursor.getColumnIndex(MoviesContract.MovieEntry.COLUMN_VOTE_COUNT)));
