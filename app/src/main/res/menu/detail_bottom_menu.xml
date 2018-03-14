@@ -4,12 +4,12 @@
     <item
         android:id="@+id/movie_synopsis_nav"
         android:icon="@drawable/ic_info_black_24dp"
-        android:title="Synopsis"
+        android:title="@string/synopsis"
         />
     <item android:id="@+id/movie_trailers_nav"
-          android:title="Trailers"
+          android:title="@string/trailers"
         android:icon="@drawable/ic_play_arrow_black_24dp"/>
     <item android:id="@+id/movie_reviews_nav"
-          android:title="Reviews"
+          android:title="@string/reviews"
         android:icon="@drawable/ic_rate_review_black_24dp"/>
 </menu>

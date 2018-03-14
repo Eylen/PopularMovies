@@ -7,4 +7,8 @@
     <string name="loading">Loading…\nPlease wait</string>
 
     <string name="content_authority">es.eylen.popularmovies</string>
+
+    <string name="synopsis">Synopsis</string>
+    <string name="trailers">Trailers</string>
+    <string name="reviews">Reviews</string>
 </resources>
