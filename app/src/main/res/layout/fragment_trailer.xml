@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools">
     <data>
         <variable
             name="trailer"
@@ -8,29 +10,46 @@
             name="listener"
             type="es.eylen.popularmovies.view.ui.MovieTrailerFragment.OnListFragmentInteractionListener"/>
     </data>
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                  android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  xmlns:app="http://schemas.android.com/apk/res-auto"
-                  android:orientation="horizontal"
 
-                  android:onClick="@{() -> listener.onListFragmentInteraction(trailer)}">
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="80dp"
+        android:layout_marginBottom="5dp"
+        android:onClick="@{() -> listener.onListFragmentInteraction(trailer)}">
 
         <ImageView
-            android:id="@+id/trailer_play_icon"
+            android:id="@+id/trailer_thumbnail"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            app:srcCompat="@drawable/ic_play_arrow_black_24dp"
-            android:tint="@color/colorPrimaryText"
-            android:contentDescription="@null"/>
+            android:layout_height="0dp"
+            android:contentDescription="@null"
+            android:scaleType="fitXY"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/guideline"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:thumbnail="@{trailer.key}"/>
 
         <TextView
             android:id="@+id/movie_trailer_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:text="@{trailer.name}"
+            android:textAppearance="?attr/textAppearanceListItem"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/guideline"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/text_margin"
-            android:textAppearance="?attr/textAppearanceListItem"
-            android:text="@{trailer.name}"/>
-    </LinearLayout>
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.4"/>
+    </android.support.constraint.ConstraintLayout>
 </layout>
