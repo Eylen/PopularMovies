@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,6 +20,7 @@ import es.eylen.popularmovies.service.helper.network.Status;
 import es.eylen.popularmovies.service.model.Movie;
 import es.eylen.popularmovies.utils.Constants;
 import es.eylen.popularmovies.view.adapter.MovieListAdapter;
+import es.eylen.popularmovies.view.layoutmanager.GridAutofitLayoutManager;
 import es.eylen.popularmovies.viewmodel.MovieListViewModel;
 
 public class MoviesActivity extends AppCompatActivity implements MovieListAdapter.MovieClickListener, LifecycleOwner,
@@ -48,7 +48,8 @@ public class MoviesActivity extends AppCompatActivity implements MovieListAdapte
 
         mMovieListAdapter = new MovieListAdapter(this);
         mRecyclerView = findViewById(R.id.movie_list);
-        mRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+        GridAutofitLayoutManager layoutManager = new GridAutofitLayoutManager(this, 360);
+        mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setAdapter(mMovieListAdapter);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setItemViewCacheSize(20);
