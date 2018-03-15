@@ -66,7 +66,9 @@ public class MovieDetailActivity extends AppCompatActivity implements LifecycleO
         mBottomNavigationView = findViewById(R.id.bottom_detail_nav);
         mBottomNavigationView.setOnNavigationItemSelectedListener(this);
 
-        loadFragment(MovieInfoFragment.newInstance());
+        if (savedInstanceState == null) {
+            loadFragment(MovieInfoFragment.newInstance());
+        }
     }
 
     @Override
