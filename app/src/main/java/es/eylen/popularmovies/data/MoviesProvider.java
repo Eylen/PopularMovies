@@ -44,83 +44,43 @@ public class MoviesProvider extends ContentProvider {
 
     @Override
     public int bulkInsert(@NonNull Uri uri, @NonNull ContentValues[] values) {
-        //TODO refactor
         final SQLiteDatabase db = mMoviesHelper.getWritableDatabase();
-        int rowsInserted = 0;
         switch (sUriMatcher.match(uri)){
             case CODE_MOVIES:
-                db.beginTransaction();
-                try {
-                    for (ContentValues value : values){
-                        long _id = db.insertWithOnConflict(MoviesContract.MovieEntry.TABLE_MOVIES, null, value, SQLiteDatabase.CONFLICT_IGNORE);
-                        if (_id != -1){
-                            rowsInserted++;
-                        } else {
-                            int updated = db.update(MoviesContract.MovieEntry.TABLE_MOVIES, value, MoviesContract.MovieEntry.COLUMN_ID + " = ?",
-                                    new String[]{String.valueOf(value.getAsInteger(MoviesContract.MovieEntry.COLUMN_ID))});
-                            if (updated > 0){
-                                rowsInserted++;
-                            }
-                        }
-                    }
-                    db.setTransactionSuccessful();
-                } finally {
-                    db.endTransaction();
-                }
-                if (rowsInserted > 0){
-                    getContext().getContentResolver().notifyChange(uri, null);
-                }
-                return rowsInserted;
+                return insertInDatabase(db, uri, values, MoviesContract.MovieEntry.TABLE_MOVIES, MoviesContract.MovieEntry.COLUMN_ID);
             case CODE_TRAILERS:
-                db.beginTransaction();
-                try {
-                    for (ContentValues value : values){
-                        long _id = db.insertWithOnConflict(TrailersContract.TrailerEntry.TABLE_TRAILERS, null, value, SQLiteDatabase.CONFLICT_IGNORE);
-                        if (_id != -1){
-                            rowsInserted++;
-                        } else {
-                            int updated = db.update(TrailersContract.TrailerEntry.TABLE_TRAILERS, value, TrailersContract.TrailerEntry.COLUMN_ID + " = ?",
-                                    new String[]{String.valueOf(value.getAsInteger(TrailersContract.TrailerEntry.COLUMN_ID))});
-                            if (updated > 0){
-                                rowsInserted++;
-                            }
-                        }
-                    }
-                    db.setTransactionSuccessful();
-                } finally {
-                    db.endTransaction();
-                }
-                if (rowsInserted > 0){
-                    getContext().getContentResolver().notifyChange(uri, null);
-                }
-                return rowsInserted;
-
+                return insertInDatabase(db, uri, values, TrailersContract.TrailerEntry.TABLE_TRAILERS, TrailersContract.TrailerEntry.COLUMN_ID);
             case CODE_REVIEWS:
-                db.beginTransaction();
-                try {
-                    for (ContentValues value : values){
-                        long _id = db.insertWithOnConflict(ReviewsContract.ReviewEntry.TABLE_REVIEWS, null, value, SQLiteDatabase.CONFLICT_IGNORE);
-                        if (_id != -1){
-                            rowsInserted++;
-                        } else {
-                            int updated = db.update(ReviewsContract.ReviewEntry.TABLE_REVIEWS, value, ReviewsContract.ReviewEntry.COLUMN_ID + " = ?",
-                                    new String[]{String.valueOf(value.getAsInteger(ReviewsContract.ReviewEntry.COLUMN_ID))});
-                            if (updated > 0){
-                                rowsInserted++;
-                            }
-                        }
-                    }
-                    db.setTransactionSuccessful();
-                } finally {
-                    db.endTransaction();
-                }
-                if (rowsInserted > 0){
-                    getContext().getContentResolver().notifyChange(uri, null);
-                }
-                return rowsInserted;
+                return insertInDatabase(db, uri, values, ReviewsContract.ReviewEntry.TABLE_REVIEWS, ReviewsContract.ReviewEntry.COLUMN_ID);
             default:
                 return super.bulkInsert(uri, values);
         }
+    }
+
+    private int insertInDatabase(SQLiteDatabase db, Uri uri, ContentValues[] values, String tableName, String colIdName){
+        int rowsInserted = 0;
+        db.beginTransaction();
+        try {
+            for (ContentValues value : values){
+                long _id = db.insertWithOnConflict(tableName, null, value, SQLiteDatabase.CONFLICT_IGNORE);
+                if (_id != -1){
+                    rowsInserted++;
+                } else {
+                    int updated = db.update(tableName, value, colIdName + " = ?",
+                            new String[]{String.valueOf(value.getAsInteger(colIdName))});
+                    if (updated > 0){
+                        rowsInserted++;
+                    }
+                }
+            }
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
+        if (rowsInserted > 0){
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+        return rowsInserted;
     }
 
     @Nullable
