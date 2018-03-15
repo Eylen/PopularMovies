@@ -31,7 +31,8 @@ import static es.eylen.popularmovies.service.helper.network.Status.LOADING;
 public class Resource<T> {
 
     @NonNull
-    public final Status status;
+    @Status
+    public final int status;
 
     @Nullable
     public final String message;
@@ -39,7 +40,7 @@ public class Resource<T> {
     @Nullable
     public final T data;
 
-    public Resource(@NonNull Status status, @Nullable T data, @Nullable String message) {
+    public Resource(@NonNull @Status int status, @Nullable T data, @Nullable String message) {
         this.status = status;
         this.data = data;
         this.message = message;
@@ -79,7 +80,7 @@ public class Resource<T> {
 
     @Override
     public int hashCode() {
-        int result = status.hashCode();
+        int result = status;
         result = 31 * result + (message != null ? message.hashCode() : 0);
         result = 31 * result + (data != null ? data.hashCode() : 0);
         return result;

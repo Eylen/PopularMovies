@@ -12,7 +12,7 @@
 
         <variable
             name="status"
-            type="es.eylen.popularmovies.service.helper.network.Status"/>
+            type="Integer"/>
 
         <variable
             name="model"

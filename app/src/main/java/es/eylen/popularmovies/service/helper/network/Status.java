@@ -16,14 +16,22 @@ package es.eylen.popularmovies.service.helper.network;
  * limitations under the License.
  */
 
+import android.support.annotation.IntDef;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
 /**
  * Status of a resource that is provided to the UI.
  * <p>
  * These are usually created by the Repository classes where they return
  * {@code LiveData<Resource<T>>} to pass back the latest data to the UI with its fetch status.
  */
-public enum Status {
-    SUCCESS,
-    ERROR,
-    LOADING
+
+@Retention(RetentionPolicy.SOURCE)
+@IntDef({Status.SUCCESS, Status.ERROR, Status.LOADING})
+public @interface Status {
+    int SUCCESS = 0;
+    int ERROR = 1;
+    int LOADING = 2;
 }
