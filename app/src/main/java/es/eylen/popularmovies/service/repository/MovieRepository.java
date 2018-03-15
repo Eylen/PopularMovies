@@ -14,6 +14,8 @@ import java.util.List;
 
 import es.eylen.popularmovies.BuildConfig;
 import es.eylen.popularmovies.data.MoviesContract;
+import es.eylen.popularmovies.data.ReviewsContract;
+import es.eylen.popularmovies.data.TrailersContract;
 import es.eylen.popularmovies.service.helper.network.Resource;
 import es.eylen.popularmovies.service.model.Movie;
 import es.eylen.popularmovies.service.model.Review;
@@ -97,7 +99,7 @@ public class MovieRepository {
                     Resource<List<Movie>> result;
                     if (response.isSuccessful()) {
                         List<Movie> movieList = (response.body() != null) ? response.body().getMovies() : null;
-                        addToContentProvider(movieList);
+                        addMoviesToContentProvider(movieList);
                         result = Resource.success(movieList);
                     } else {
                         //Retrieve from database
@@ -119,7 +121,7 @@ public class MovieRepository {
         return mutableResponse;
     }
 
-    public LiveData<Resource<List<Trailer>>> loadMovieTrailers(int movieId){
+    public LiveData<Resource<List<Trailer>>> loadMovieTrailers(final int movieId){
         MutableLiveData<Resource<List<Trailer>>> mutableResponse = new MutableLiveData<>();
         mutableResponse.postValue(Resource.loading(null));
 
@@ -129,16 +131,18 @@ public class MovieRepository {
             public void onResponse(@NonNull Call<MovieTrailersResponse> call, @NonNull Response<MovieTrailersResponse> response) {
                 Resource<List<Trailer>> result;
                 if (response.isSuccessful()){
-                    result = Resource.success(response.body().getTrailers());
+                    List<Trailer> trailerList = (response.body() != null) ? response.body().getTrailers() : null;
+                    addTrailersToContentProvider(trailerList, movieId);
+                    result = Resource.success(trailerList);
                 } else {
-                    result = Resource.error(response.message(), null);
+                    result = Resource.success(fetchTrailersFromContentProvider(movieId));
                 }
                 mutableResponse.postValue(result);
             }
 
             @Override
             public void onFailure(@NonNull Call<MovieTrailersResponse> call, @NonNull Throwable t) {
-                mutableResponse.postValue(Resource.error(t.getMessage(), null));
+                mutableResponse.postValue(Resource.success(fetchTrailersFromContentProvider(movieId)));
             }
         });
         return mutableResponse;
@@ -154,16 +158,18 @@ public class MovieRepository {
             public void onResponse(@NonNull Call<MovieReviewsResponse> call, @NonNull Response<MovieReviewsResponse> response) {
                 Resource<List<Review>> result;
                 if (response.isSuccessful()){
-                    result = Resource.success(response.body().getReviews());
+                    List<Review> reviewList = (response.body() != null) ? response.body().getReviews() : null;
+                    addReviewsToContentProvider(reviewList, movieId);
+                    result = Resource.success(reviewList);
                 } else {
-                    result = Resource.error(response.message(), null);
+                    result = Resource.success(fetchReviewsFromContentProvider(movieId));
                 }
                 mutableResponse.postValue(result);
             }
 
             @Override
             public void onFailure(@NonNull Call<MovieReviewsResponse> call, @NonNull Throwable t) {
-                mutableResponse.postValue(Resource.error(t.getMessage(), null));
+                mutableResponse.postValue(Resource.success(fetchReviewsFromContentProvider(movieId)));
             }
         });
         return mutableResponse;
@@ -194,7 +200,7 @@ public class MovieRepository {
                 values, where, selectionArgs);
     }
 
-    private void addToContentProvider(List<Movie> movieList){
+    private void addMoviesToContentProvider(List<Movie> movieList){
         ContentValues[] contentValues = new ContentValues[movieList.size()];
         ContentValues values;
         Movie movie;
@@ -214,6 +220,41 @@ public class MovieRepository {
             contentValues[i] = values;
         }
         mContentResolver.bulkInsert(MoviesContract.MovieEntry.CONTENT_URI, contentValues);
+    }
+
+    private void addTrailersToContentProvider(List<Trailer> trailerList, int movieId){
+        ContentValues[] contentValues = new ContentValues[trailerList.size()];
+        ContentValues values;
+        Trailer trailer;
+        for (int i=0; i < trailerList.size(); i++){
+            trailer = trailerList.get(i);
+            values = new ContentValues();
+            values.put(TrailersContract.TrailerEntry.COLUMN_ID, trailer.getId());
+            values.put(TrailersContract.TrailerEntry.COLUMN_KEY, trailer.getKey());
+            values.put(TrailersContract.TrailerEntry.COLUMN_NAME, trailer.getName());
+            values.put(TrailersContract.TrailerEntry.COLUMN_SITE, trailer.getSite());
+            values.put(TrailersContract.TrailerEntry.COLUMN_TYPE, trailer.getType());
+            values.put(TrailersContract.TrailerEntry.COLUMN_MOVIE, movieId);
+            contentValues[i] = values;
+        }
+        mContentResolver.bulkInsert(TrailersContract.TrailerEntry.CONTENT_URI.buildUpon().appendPath(String.valueOf(movieId)).build(), contentValues);
+    }
+
+    private void addReviewsToContentProvider(List<Review> reviewList, int movieId){
+        ContentValues[] contentValues = new ContentValues[reviewList.size()];
+        ContentValues values;
+        Review review;
+        for (int i=0; i < reviewList.size(); i++){
+            review = reviewList.get(i);
+            values = new ContentValues();
+            values.put(ReviewsContract.ReviewEntry.COLUMN_ID, review.getId());
+            values.put(ReviewsContract.ReviewEntry.COLUMN_AUTHOR, review.getAuthor());
+            values.put(ReviewsContract.ReviewEntry.COLUMN_CONTENT, review.getContent());
+            values.put(ReviewsContract.ReviewEntry.COLUMN_URL, review.getUrl());
+            values.put(ReviewsContract.ReviewEntry.COLUMN_MOVIE, movieId);
+            contentValues[i] = values;
+        }
+        mContentResolver.bulkInsert(ReviewsContract.ReviewEntry.CONTENT_URI.buildUpon().appendPath(String.valueOf(movieId)).build(), contentValues);
     }
 
     private List<Movie> fetchFromContentProvider(String filterSortOption){
@@ -246,5 +287,48 @@ public class MovieRepository {
         }
         cursor.close();
         return movieList;
+    }
+
+    private List<Trailer> fetchTrailersFromContentProvider(int movieId){
+        List<Trailer> trailerList = new ArrayList<>();
+
+        String[] projection = new String[]{};
+        String selection = null;
+        String[] selectionArgs = new String[]{};
+        String sortOrder = null;
+        Cursor cursor = mContentResolver.query(TrailersContract.TrailerEntry.CONTENT_URI.buildUpon().appendPath(String.valueOf(movieId)).build(),
+                projection, selection, selectionArgs, sortOrder);
+        while (cursor.moveToNext()){
+            Trailer trailer = new Trailer();
+            trailer.setId(cursor.getString(cursor.getColumnIndex(TrailersContract.TrailerEntry.COLUMN_ID)));
+            trailer.setName(cursor.getString(cursor.getColumnIndex(TrailersContract.TrailerEntry.COLUMN_NAME)));
+            trailer.setKey(cursor.getString(cursor.getColumnIndex(TrailersContract.TrailerEntry.COLUMN_KEY)));
+            trailer.setSite(cursor.getString(cursor.getColumnIndex(TrailersContract.TrailerEntry.COLUMN_SITE)));
+            trailer.setType(cursor.getString(cursor.getColumnIndex(TrailersContract.TrailerEntry.COLUMN_TYPE)));
+            trailerList.add(trailer);
+        }
+        cursor.close();
+        return trailerList;
+    }
+
+    private List<Review> fetchReviewsFromContentProvider(int movieId){
+        List<Review> reviewList = new ArrayList<>();
+
+        String[] projection = new String[]{};
+        String selection = null;
+        String[] selectionArgs = new String[]{};
+        String sortOrder = null;
+        Cursor cursor = mContentResolver.query(ReviewsContract.ReviewEntry.CONTENT_URI.buildUpon().appendPath(String.valueOf(movieId)).build(),
+                projection, selection, selectionArgs, sortOrder);
+        while (cursor.moveToNext()){
+            Review review= new Review();
+            review.setId(cursor.getString(cursor.getColumnIndex(ReviewsContract.ReviewEntry.COLUMN_ID)));
+            review.setAuthor(cursor.getString(cursor.getColumnIndex(ReviewsContract.ReviewEntry.COLUMN_AUTHOR)));
+            review.setContent(cursor.getString(cursor.getColumnIndex(ReviewsContract.ReviewEntry.COLUMN_CONTENT)));
+            review.setUrl(cursor.getString(cursor.getColumnIndex(ReviewsContract.ReviewEntry.COLUMN_URL)));
+            reviewList.add(review);
+        }
+        cursor.close();
+        return reviewList;
     }
 }

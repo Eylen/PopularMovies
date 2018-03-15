@@ -17,6 +17,8 @@ import android.support.annotation.Nullable;
 public class MoviesProvider extends ContentProvider {
     public static final int CODE_MOVIES = 100;
     public static final int CODE_SINGLE_MOVIE = 101;
+    public static final int CODE_REVIEWS = 200;
+    public static final int CODE_TRAILERS = 300;
 
     private static final UriMatcher sUriMatcher = buildUriMatcher();
     private MoviesDBHelper mMoviesHelper;
@@ -27,6 +29,9 @@ public class MoviesProvider extends ContentProvider {
 
         matcher.addURI(authority, MoviesContract.PATH_MOVIES, CODE_MOVIES);
         matcher.addURI(authority, MoviesContract.PATH_MOVIES + "/#", CODE_SINGLE_MOVIE);
+
+        matcher.addURI(authority, ReviewsContract.PATH_REVIEWS + "/#", CODE_REVIEWS);
+        matcher.addURI(authority, TrailersContract.PATH_TRAILERS+ "/#", CODE_TRAILERS);
 
         return matcher;
     }
@@ -39,11 +44,12 @@ public class MoviesProvider extends ContentProvider {
 
     @Override
     public int bulkInsert(@NonNull Uri uri, @NonNull ContentValues[] values) {
+        //TODO refactor
         final SQLiteDatabase db = mMoviesHelper.getWritableDatabase();
+        int rowsInserted = 0;
         switch (sUriMatcher.match(uri)){
             case CODE_MOVIES:
                 db.beginTransaction();
-                int rowsInserted = 0;
                 try {
                     for (ContentValues value : values){
                         long _id = db.insertWithOnConflict(MoviesContract.MovieEntry.TABLE_MOVIES, null, value, SQLiteDatabase.CONFLICT_IGNORE);
@@ -65,6 +71,53 @@ public class MoviesProvider extends ContentProvider {
                     getContext().getContentResolver().notifyChange(uri, null);
                 }
                 return rowsInserted;
+            case CODE_TRAILERS:
+                db.beginTransaction();
+                try {
+                    for (ContentValues value : values){
+                        long _id = db.insertWithOnConflict(TrailersContract.TrailerEntry.TABLE_TRAILERS, null, value, SQLiteDatabase.CONFLICT_IGNORE);
+                        if (_id != -1){
+                            rowsInserted++;
+                        } else {
+                            int updated = db.update(TrailersContract.TrailerEntry.TABLE_TRAILERS, value, TrailersContract.TrailerEntry.COLUMN_ID + " = ?",
+                                    new String[]{String.valueOf(value.getAsInteger(TrailersContract.TrailerEntry.COLUMN_ID))});
+                            if (updated > 0){
+                                rowsInserted++;
+                            }
+                        }
+                    }
+                    db.setTransactionSuccessful();
+                } finally {
+                    db.endTransaction();
+                }
+                if (rowsInserted > 0){
+                    getContext().getContentResolver().notifyChange(uri, null);
+                }
+                return rowsInserted;
+
+            case CODE_REVIEWS:
+                db.beginTransaction();
+                try {
+                    for (ContentValues value : values){
+                        long _id = db.insertWithOnConflict(ReviewsContract.ReviewEntry.TABLE_REVIEWS, null, value, SQLiteDatabase.CONFLICT_IGNORE);
+                        if (_id != -1){
+                            rowsInserted++;
+                        } else {
+                            int updated = db.update(ReviewsContract.ReviewEntry.TABLE_REVIEWS, value, ReviewsContract.ReviewEntry.COLUMN_ID + " = ?",
+                                    new String[]{String.valueOf(value.getAsInteger(ReviewsContract.ReviewEntry.COLUMN_ID))});
+                            if (updated > 0){
+                                rowsInserted++;
+                            }
+                        }
+                    }
+                    db.setTransactionSuccessful();
+                } finally {
+                    db.endTransaction();
+                }
+                if (rowsInserted > 0){
+                    getContext().getContentResolver().notifyChange(uri, null);
+                }
+                return rowsInserted;
             default:
                 return super.bulkInsert(uri, values);
         }
@@ -73,6 +126,7 @@ public class MoviesProvider extends ContentProvider {
     @Nullable
     @Override
     public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String sortOrder) {
+        //TODO refactor
         Cursor cursor;
         final SQLiteDatabase db = mMoviesHelper.getReadableDatabase();
         switch (sUriMatcher.match(uri)){
@@ -89,6 +143,24 @@ public class MoviesProvider extends ContentProvider {
                 cursor = db.query(MoviesContract.MovieEntry.TABLE_MOVIES,
                         projection,
                         MoviesContract.MovieEntry.COLUMN_ID + " = ?",
+                        new String[]{String.valueOf(ContentUris.parseId(uri))},
+                        null,
+                        null,
+                        sortOrder);
+                break;
+            case CODE_TRAILERS:
+                cursor = db.query(TrailersContract.TrailerEntry.TABLE_TRAILERS,
+                        projection,
+                        TrailersContract.TrailerEntry.COLUMN_MOVIE + " = ?",
+                        new String[]{String.valueOf(ContentUris.parseId(uri))},
+                        null,
+                        null,
+                        sortOrder);
+                break;
+            case CODE_REVIEWS:
+                cursor = db.query(ReviewsContract.ReviewEntry.TABLE_REVIEWS,
+                        projection,
+                        ReviewsContract.ReviewEntry.COLUMN_MOVIE + " = ?",
                         new String[]{String.valueOf(ContentUris.parseId(uri))},
                         null,
                         null,
